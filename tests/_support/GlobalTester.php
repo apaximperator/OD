@@ -106,11 +106,13 @@ class GlobalTester extends AcceptanceTester
      * @param int $time
      * @throws Exception
      */
-    public function closePopup($time = 30)
+    public function closePopup(int $time = 30)
     {
-        $this->waitForElementVisible("#webChannel .title", $time);
-        $this->click("div[data-wps-popup-close]");
-        $this->waitForElementNotVisible("#webChannel .title", 5);
+        $I = $this;
+        $I->connectJq();
+        $I->waitForElementVisible("#webChannel .title", $time);
+        $I->click("div[data-wps-popup-close]");
+        $I->waitForElementNotVisible("#webChannel .title", 5);
     }
 
 

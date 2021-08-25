@@ -46,22 +46,20 @@ class AcceptanceTester extends Actor
         return $I->executeJS("return document.querySelectorAll('$selector').length");
     }
 
-    private static $cjq = true;
-
     /**
      * Connect JQ on site
      */
     public function connectJq()
     {
         $I = $this;
-        if (self::$cjq) {
-            $I->executeJS("var script = document.createElement('script');
+        $I->executeJS("if(!document.querySelector('script[src=\"https://code.jquery.com/jquery-3.6.0.js\"]')) 
+            {var script = document.createElement('script');
             script.type = 'text/javascript';
-            script.src = 'http://code.jquery.com/jquery-1.8.3.js';
+            script.src = 'https://code.jquery.com/jquery-3.6.0.js';
+            script.text = 'JQ is connected';
             document.head.appendChild(script);
-            ");
-            self::$cjq = false;
-        }
+            console.log('jq!');
+            }");
     }
 
 }

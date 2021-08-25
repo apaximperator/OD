@@ -11,6 +11,7 @@ class CategoryTester extends AcceptanceTester
     public function openRandomNotEmptyBrandCategory()
     {
         $I = $this;
+        $I->connectJq();
         $categoryWithoutProducts = true;
         while ($categoryWithoutProducts) {
             $I->openRandomBrandCategory();
@@ -42,6 +43,7 @@ class CategoryTester extends AcceptanceTester
     public function openRandomNotEmptyCategoryWithProductWithSelectYourItemsAddButton() //Open random category with not empty check & 'Select Your Items' button check
     {
         $I = $this;
+        $I->connectJq();
         $categoryWithoutProductsWithSelectYourItemsButton = true; //Creating a variable for check 'Select Your Items' button
         while ($categoryWithoutProductsWithSelectYourItemsButton) { //Start cycle for check 'Select Your Items' button
             $I->openRandomNotEmptyCategory(); //Open random category with check 'Select Your Items' button
@@ -61,6 +63,7 @@ class CategoryTester extends AcceptanceTester
     public function openRandomCategory()
     {
         $I = $this;
+        $I->connectJq();
         $topCategoryCount = $I->getElementsCountByCssSelector('li.level0.parent'); //Writing variable with top categories count
         $randomTopCategoryNumber = Factory::create(); //Run Faker create generator
         $randomTopCategoryNumber = $randomTopCategoryNumber->numberBetween(2, $topCategoryCount - 1); //Converted to string and generate numberBetween
