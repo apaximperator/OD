@@ -11,7 +11,7 @@ class BlogCest
     public function blog(GlobalTester $G, CategoryTester $C)
     {
         $G->amOnPage('/');
-        $G->searchByText();
+        $C->openRandomNotEmptyCLP();
     }
 
 }

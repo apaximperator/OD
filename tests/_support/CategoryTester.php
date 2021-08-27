@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Factory;
+use Page\Credentials;
 
 class CategoryTester extends AcceptanceTester
 {
@@ -27,7 +28,7 @@ class CategoryTester extends AcceptanceTester
     /**
      *
      */
-    public function openRandomBrandCategory()
+    private function openRandomBrandCategory()
     {
         $I = $this;
         $I->connectJq();
@@ -43,13 +44,13 @@ class CategoryTester extends AcceptanceTester
     /**
      * @throws Exception
      */
-    public function openRandomNotEmptyCategory() //Open random category with not empty check & 'Select Your Items' button check
+    public function openRandomNotEmptyCLP()
     {
         $I = $this;
         $I->connectJq();
         $categoryWithoutProducts = true; //Creating a variable for check 'Select Your Items' button
         while ($categoryWithoutProducts) { //Start cycle for check 'Select Your Items' button
-            $I->openRandomCategory(); //Open random category with check 'Select Your Items' button
+            $I->openRandomCLP(); //Open random category with check 'Select Your Items' button
             try {
                 $I->seeElement(".bss-bt-quickview"); //Check product with 'Select Your Items' button availability
                 $categoryWithoutProducts = false; //This category without products with 'Select Your Items' button - false
@@ -59,46 +60,57 @@ class CategoryTester extends AcceptanceTester
         }
     }
 
-    public function openRandomCategory()
+    /**
+     *
+     */
+    private function openRandomCLP()
     {
         $I = $this;
         $I->connectJq();
         $I->moveMouseOver("//span[contains(text(),'Women')]/ancestor::a");
-        $BrandCategoryCount = $I->getElementsCountByCssSelector('.menu-brand-block-content div .pagebuilder-column');
-        $BrandCategoryNumber = rand(0, $BrandCategoryCount - 1);
-        $BrandLink = $I->executeJS('return document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].getAttribute("href");');
-        $I->executeJS('document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].click();');
+        $CategoryCount = $I->getElementsCountByCssSelector('div.menu-column>li ul');
+        $CategoryNumber = rand(0, $CategoryCount - 1);
+        $CategoryLink = $I->executeJS('return document.querySelectorAll("div>div.menu-column li.parent>a")[' . $CategoryNumber . '].getAttribute("href");');
+        $CategoryLink = str_replace(Credentials::$URL, '', $CategoryLink);
+        $I->executeJS('document.querySelectorAll("div>div.menu-column li.parent>a")[' . $CategoryNumber . '].click();');
         $I->waitPageLoad();
-        $I->canSeeInCurrentUrl($BrandLink);
+        $I->canSeeInCurrentUrl($CategoryLink);
     }
 
     /**
      * @throws Exception
      */
-    public function openRandomCategory1()
+    public function openRandomNotEmptyPLP() //TODO написать для выбора простой категории
     {
         $I = $this;
         $I->connectJq();
-        $topCategoryCount = $I->getElementsCountByCssSelector('li.level0.parent'); //Writing variable with top categories count
-        $randomTopCategoryNumber = Factory::create(); //Run Faker create generator
-        $randomTopCategoryNumber = $randomTopCategoryNumber->numberBetween(2, $topCategoryCount - 1); //Converted to string and generate numberBetween
-        $I->click("//li[contains(@class,'level0 nav')][$randomTopCategoryNumber]"); //Click on random top category
-        $I->wait(1);
-        $subCategoryLevel1Count = $I->getElementsCountByCssSelector('ul.is-active li.level1'); //Writing variable with subcategories level1 count
-        $randomSubCategoryLevel1Number = Factory::create(); //Run Faker create generator
-        $randomSubCategoryLevel1Number = $randomSubCategoryLevel1Number->numberBetween(1, $subCategoryLevel1Count); //Converted to string and generate numberBetween
-        $I->click("//ul[contains(@class,'is-active')]//li[contains(@class,'level1')][$randomSubCategoryLevel1Number]"); //Click on random subcategory level1
-        try {
-            $I->waitForElementVisible("//ul[contains(@class,'level1 is-active')]//h3", 2); //Check parent category dropdown
-            $subCategoryLevel2Count = $I->getElementsCountByCssSelector('ul.level1.is-active li.level2'); //Writing variable with subcategories level2 count
-            $randomSubCategoryLevel2Number = Factory::create(); //Run Faker create generator
-            $randomSubCategoryLevel2Number = $randomSubCategoryLevel2Number->numberBetween(1, $subCategoryLevel2Count); //Converted to string and generate numberBetween
-            $I->click("//ul[contains(@class,'level1 is-active')]//li[contains(@class,'level2')][$randomSubCategoryLevel2Number]"); //Click on random subcategory level2
-            $I->waitPageLoad();
-        } catch (Exception $e) {
-            $I->waitPageLoad();
+        $categoryWithoutProducts = true; //Creating a variable for check 'Select Your Items' button
+        while ($categoryWithoutProducts) { //Start cycle for check 'Select Your Items' button
+            $I->openRandomPLP(); //Open random category with check 'Select Your Items' button
+            try {
+                $I->seeElement(".bss-bt-quickview"); //Check product with 'Select Your Items' button availability
+                $categoryWithoutProducts = false; //This category without products with 'Select Your Items' button - false
+            } catch (Exception $e) {
+                $categoryWithoutProducts = true; //This category without products with 'Select Your Items' button - true
+            }
         }
-        $I->waitForElementVisible("h1.page-title", 30); //Waiting for category h1 title
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function openRandomPLP()
+    {
+        $I = $this;
+        $I->connectJq();
+        $I->moveMouseOver("//span[contains(text(),'Women')]/ancestor::a");
+        $CategoryCount = $I->getElementsCountByCssSelector('div.menu-column>li ul');
+        $CategoryNumber = rand(0, $CategoryCount - 1);
+        $CategoryLink = $I->executeJS('return document.querySelectorAll("div>div.menu-column li.parent>a")[' . $CategoryNumber . '].getAttribute("href");');
+        $CategoryLink = str_replace(Credentials::$URL, '', $CategoryLink);
+        $I->executeJS('document.querySelectorAll("div>div.menu-column li.parent>a")[' . $CategoryNumber . '].click();');
+        $I->waitPageLoad();
+        $I->canSeeInCurrentUrl($CategoryLink);
     }
 
     /**
