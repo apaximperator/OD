@@ -12,18 +12,21 @@ class CategoryTester extends AcceptanceTester
     {
         $I = $this;
         $I->connectJq();
-        $categoryWithoutProducts = true;
-        while ($categoryWithoutProducts) {
+        $brandCategoryWithoutProducts = true;
+        while ($brandCategoryWithoutProducts) {
             $I->openRandomBrandCategory();
             try {
                 $I->seeElement("//div[@class='product-item-info']");
-                $categoryWithoutProducts = false;
+                $brandCategoryWithoutProducts = false;
             } catch (Exception $e) {
-                $categoryWithoutProducts = true;
+                $brandCategoryWithoutProducts = true;
             }
         }
     }
 
+    /**
+     *
+     */
     public function openRandomBrandCategory()
     {
         $I = $this;
@@ -40,27 +43,39 @@ class CategoryTester extends AcceptanceTester
     /**
      * @throws Exception
      */
-    public function openRandomNotEmptyCategoryWithProductWithSelectYourItemsAddButton() //Open random category with not empty check & 'Select Your Items' button check
+    public function openRandomNotEmptyCategory() //Open random category with not empty check & 'Select Your Items' button check
     {
         $I = $this;
         $I->connectJq();
-        $categoryWithoutProductsWithSelectYourItemsButton = true; //Creating a variable for check 'Select Your Items' button
-        while ($categoryWithoutProductsWithSelectYourItemsButton) { //Start cycle for check 'Select Your Items' button
-            $I->openRandomNotEmptyCategory(); //Open random category with check 'Select Your Items' button
+        $categoryWithoutProducts = true; //Creating a variable for check 'Select Your Items' button
+        while ($categoryWithoutProducts) { //Start cycle for check 'Select Your Items' button
+            $I->openRandomCategory(); //Open random category with check 'Select Your Items' button
             try {
-                $I->seeElement("(//li[@class='item product product-item']//a[contains(@class,'action tocart')])"); //Check product with 'Select Your Items' button availability
-                $categoryWithoutProductsWithSelectYourItemsButton = false; //This category without products with 'Select Your Items' button - false
+                $I->seeElement(".bss-bt-quickview"); //Check product with 'Select Your Items' button availability
+                $categoryWithoutProducts = false; //This category without products with 'Select Your Items' button - false
             } catch (Exception $e) {
-                $categoryWithoutProductsWithSelectYourItemsButton = true; //This category without products with 'Select Your Items' button - true
+                $categoryWithoutProducts = true; //This category without products with 'Select Your Items' button - true
             }
         }
     }
 
+    public function openRandomCategory()
+    {
+        $I = $this;
+        $I->connectJq();
+        $I->moveMouseOver("//span[contains(text(),'Women')]/ancestor::a");
+        $BrandCategoryCount = $I->getElementsCountByCssSelector('.menu-brand-block-content div .pagebuilder-column');
+        $BrandCategoryNumber = rand(0, $BrandCategoryCount - 1);
+        $BrandLink = $I->executeJS('return document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].getAttribute("href");');
+        $I->executeJS('document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].click();');
+        $I->waitPageLoad();
+        $I->canSeeInCurrentUrl($BrandLink);
+    }
 
     /**
      * @throws Exception
      */
-    public function openRandomCategory()
+    public function openRandomCategory1()
     {
         $I = $this;
         $I->connectJq();

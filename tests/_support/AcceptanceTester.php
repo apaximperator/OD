@@ -56,9 +56,7 @@ class AcceptanceTester extends Actor
             {var script = document.createElement('script');
             script.type = 'text/javascript';
             script.src = 'https://code.jquery.com/jquery-3.6.0.js';
-            script.text = 'JQ is connected';
             document.head.appendChild(script);
-            console.log('jq!');
             }");
     }
 

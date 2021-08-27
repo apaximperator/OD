@@ -127,6 +127,8 @@ class GlobalTester extends AcceptanceTester
         $I->waitForElementVisible("#search");
         $I->click("#search");
         $I->fillField("#search", $searchString);
+        $I->waitForElementClickable("#klevuSearchSuggest ul li a", 10);
+        $I->click("#klevuSearchSuggest ul li a");
         $I->amOnPage("/");
     }
 
