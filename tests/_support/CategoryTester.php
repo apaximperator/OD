@@ -80,7 +80,7 @@ class CategoryTester extends AcceptanceTester
     /**
      * @throws Exception
      */
-    public function openRandomNotEmptyPLP() //TODO написать для выбора простой категории
+    public function openRandomNotEmptyPLP()
     {
         $I = $this;
         $I->connectJq();
@@ -104,11 +104,11 @@ class CategoryTester extends AcceptanceTester
         $I = $this;
         $I->connectJq();
         $I->moveMouseOver("//span[contains(text(),'Women')]/ancestor::a");
-        $CategoryCount = $I->getElementsCountByCssSelector('div.menu-column>li ul');
+        $CategoryCount = $I->getElementsCountByCssSelector('div>div.menu-column li ul a');
         $CategoryNumber = rand(0, $CategoryCount - 1);
-        $CategoryLink = $I->executeJS('return document.querySelectorAll("div>div.menu-column li.parent>a")[' . $CategoryNumber . '].getAttribute("href");');
+        $CategoryLink = $I->executeJS('return document.querySelectorAll("div>div.menu-column li ul a")[' . $CategoryNumber . '].getAttribute("href");');
         $CategoryLink = str_replace(Credentials::$URL, '', $CategoryLink);
-        $I->executeJS('document.querySelectorAll("div>div.menu-column li.parent>a")[' . $CategoryNumber . '].click();');
+        $I->executeJS('document.querySelectorAll("div>div.menu-column li ul a")[' . $CategoryNumber . '].click();');
         $I->waitPageLoad();
         $I->canSeeInCurrentUrl($CategoryLink);
     }
