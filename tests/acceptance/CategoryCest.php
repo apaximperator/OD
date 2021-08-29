@@ -11,8 +11,7 @@ class CategoryCest
     {
         $I->amOnPage('/'); //Open Homepage
         $I->waitForElementVisible("//div[contains(@class,'login')]//a[contains(@class,'login')]", 30); //Wait 'My Account' section
-        $I->openRandomNotEmptyCategory();
-        $I->selectAndRemoveRandomNumberOfFilters(2); //Select and remove number of filters by argument
+        $I->openRandomNotEmptyCLP();
         $I->selectRandomFilter();
         $I->click("//a[contains(@class,'action clear')]"); //Click on 'clear filters' button
         $I->waitForElementNotVisible("//a[contains(@class,'action clear')]"); //Waiting for 'clear filters' button to be not visible
