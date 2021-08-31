@@ -48,14 +48,14 @@ class CategoryTester extends AcceptanceTester
     {
         $I = $this;
         $I->connectJq();
-        $categoryWithoutProducts = true; //Creating a variable for check 'Select Your Items' button
-        while ($categoryWithoutProducts) { //Start cycle for check 'Select Your Items' button
-            $I->openRandomCategoryBySelector('div>div.menu-column li.parent>a'); //Open random category with check 'Select Your Items' button
+        $categoryWithoutProducts = true;
+        while ($categoryWithoutProducts) {
+            $I->openRandomCategoryBySelector('div>div.menu-column li.parent>a');
             try {
-                $I->seeElement(".bss-bt-quickview"); //Check product with 'Select Your Items' button availability
-                $categoryWithoutProducts = false; //This category without products with 'Select Your Items' button - false
+                $I->seeElement(".bss-bt-quickview");
+                $categoryWithoutProducts = false;
             } catch (Exception $e) {
-                $categoryWithoutProducts = true; //This category without products with 'Select Your Items' button - true
+                $categoryWithoutProducts = true;
             }
         }
     }
@@ -67,14 +67,14 @@ class CategoryTester extends AcceptanceTester
     {
         $I = $this;
         $I->connectJq();
-        $categoryWithoutProducts = true; //Creating a variable for check 'Select Your Items' button
-        while ($categoryWithoutProducts) { //Start cycle for check 'Select Your Items' button
-            $I->openRandomCategoryBySelector('div>div.menu-column li ul a'); //Open random category with check 'Select Your Items' button
+        $categoryWithoutProducts = true;
+        while ($categoryWithoutProducts) {
+            $I->openRandomCategoryBySelector('div>div.menu-column li ul a');
             try {
-                $I->seeElement(".bss-bt-quickview"); //Check product with 'Select Your Items' button availability
-                $categoryWithoutProducts = false; //This category without products with 'Select Your Items' button - false
+                $I->seeElement(".bss-bt-quickview");
+                $categoryWithoutProducts = false;
             } catch (Exception $e) {
-                $categoryWithoutProducts = true; //This category without products with 'Select Your Items' button - true
+                $categoryWithoutProducts = true;
             }
         }
     }
@@ -99,19 +99,6 @@ class CategoryTester extends AcceptanceTester
     /**
      * @throws Exception
      */
-    public function openSupplementStacksCategory() //The category with 'select your items' products
-    {
-        $I = $this;
-        $I->click("//li[contains(@class,'level0 nav')][2]"); //Open 'Shop by category' category
-        $I->wait(1);
-        $I->click("//ul[contains(@class,'is-active')]//li[contains(@class,'level1')]//a[contains(@href,'/supplement-stacks')]"); //Click on 'supplement-stacks' category
-        $I->waitPageLoad();
-        $I->waitForElementVisible("//h1[@id='page-title-heading']", 30); //Waiting for category h1 title
-    }
-
-    /**
-     * @throws Exception
-     */
     public function openRandomProduct() //Check product qty and open random product with this qty
     {
         $I = $this;
@@ -131,16 +118,18 @@ class CategoryTester extends AcceptanceTester
     /**
      * @throws Exception
      */
-    public function sortBySelect() //Get 'Sort By' option count and select each
+    public function sortBySelect()
     {
         $I = $this;
-        $I->waitForElementVisible("//div[@class='toolbar-top']//select[@id='sorter']"); //Check 'Sort By' select
-        $sortCount = $I->getElementsCountByCssSelector('div.toolbar-top select#sorter option'); //Writing variable with sort by options count
-        for ($optionByIndex = 1; $optionByIndex <= $sortCount; $optionByIndex++) { //Start cycle for 'Sort By' select
-            $sortByOption = $I->grabTextFrom("//div[@class='toolbar-top']//select[@id='sorter']//option[$optionByIndex]"); //Writing variable with desired sort by option
-            $I->selectOption("//div[@class='toolbar-top']//select[@id='sorter']", $sortByOption); //Select desired sort by option
-            $I->waitPageLoad(); //Waiting for full page load
-            $I->waitForElementVisible("div [class='toolbar-top'] select[id='sorter'] option:nth-of-type($optionByIndex)[selected='selected']"); //Check that the option is 'selected'
+        $I->connectJq();
+        $I->waitForElementVisible("#sorter");
+        $sortCount = $I->getElementsCountByCssSelector("#sorter>option");
+        for ($optionByIndex = 0; $optionByIndex < $sortCount / 2; $optionByIndex++) {
+            $sortByOption = trim($I->executeJS("return document.querySelectorAll(\"#sorter option\")[$optionByIndex].innerText"));
+            $I->selectOption("//select[@id='sorter']", $sortByOption);
+            $I->waitPageLoad();
+            $I->wait(1);
+            $I->waitForElementVisible("select[id='sorter'] option:nth-of-type(" . ($optionByIndex + 1) . ")[selected='selected']");
         }
     }
 
@@ -151,15 +140,15 @@ class CategoryTester extends AcceptanceTester
     {
         $I = $this;
         $I->connectJq();
-        $dropdownFiltersCount = $I->getElementsCountByCssSelector(".filter-options-title"); //Writing variable with dropdown filters count
+        $dropdownFiltersCount = $I->getElementsCountByCssSelector(".filter-options-title");
         $randomDropdownFilter = rand(0, $dropdownFiltersCount - 1);
         $I->executeJS("document.querySelectorAll(\".filter-options-title\")[$randomDropdownFilter].click()");
         $I->waitForElementVisible('div[aria-hidden = "false"] li.item');
-        $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] li.item'); //Writing variable with filters count
+        $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] li.item');
         $randomFilterNumber = rand(1, $filtersCount);
         $I->waitForElementClickable("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)", 10);
-        $I->click("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)"); //Click on random filter
-        $I->waitForElementVisible("a.action.clear.filter-clear"); //Waiting for the filter is selected
+        $I->click("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)");
+        $I->waitForElementVisible("a.action.clear.filter-clear");
         $I->waitPageLoad();
     }
 
