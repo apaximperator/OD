@@ -99,20 +99,18 @@ class CategoryTester extends AcceptanceTester
     /**
      * @throws Exception
      */
-    public function openRandomProduct() //Check product qty and open random product with this qty
+    public function openRandomProduct()
     {
         $I = $this;
-        $productsCount = (int)$I->grabTextFrom("//div[@class='toolbar-top']//span[@class='toolbar-number']"); //Check and converted to int products qty
-        if ($productsCount > 32) { //If products qty is over 32
-            $productsCount = 32; //Then write '32' number to variable
-        }
-        $randomProductNumber = Factory::create(); //Run Faker create generator
-        $randomProductNumber = $randomProductNumber->numberBetween(1, $productsCount); //Converted to string and generate numberBetween
-        $I->waitForElementClickable("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']"); //Waiting for product item link is clickable
-        $I->wait(1);
-        $I->click("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product photo product-item-photo']"); //Click on random product card
+        $productsCount = $I->getElementsCountByCssSelector("li.product-item");
+        $randomProductNumber = rand(0, $productsCount - 1);
+        $I->waitForElementClickable("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 10);
+        $productLink = $I->grabAttributeFrom("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 'href');
+        $productLink = str_replace(Credentials::$URL, '', $productLink);
+        $I->click("//*[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']");
         $I->waitPageLoad();
-        $I->waitForElementVisible("h1.page-title", 30); //Waiting for product h1 title
+        $I->seeInCurrentUrl($productLink);
+        $I->waitForElementVisible("h1.page-title", 30);
     }
 
     /**
@@ -122,14 +120,14 @@ class CategoryTester extends AcceptanceTester
     {
         $I = $this;
         $I->connectJq();
-        $I->waitForElementVisible("#sorter");
+        $I->waitForElementVisible("#sorter", 10);
         $sortCount = $I->getElementsCountByCssSelector("#sorter>option");
         for ($optionByIndex = 0; $optionByIndex < $sortCount / 2; $optionByIndex++) {
             $sortByOption = trim($I->executeJS("return document.querySelectorAll(\"#sorter option\")[$optionByIndex].innerText"));
             $I->selectOption("//select[@id='sorter']", $sortByOption);
             $I->waitPageLoad();
             $I->wait(1);
-            $I->waitForElementVisible("select[id='sorter'] option:nth-of-type(" . ($optionByIndex + 1) . ")[selected='selected']");
+            $I->waitForElementVisible("select[id='sorter'] option:nth-of-type(" . ($optionByIndex + 1) . ")[selected='selected']", 10);
         }
     }
 
@@ -143,13 +141,25 @@ class CategoryTester extends AcceptanceTester
         $dropdownFiltersCount = $I->getElementsCountByCssSelector(".filter-options-title");
         $randomDropdownFilter = rand(0, $dropdownFiltersCount - 1);
         $I->executeJS("document.querySelectorAll(\".filter-options-title\")[$randomDropdownFilter].click()");
-        $I->waitForElementVisible('div[aria-hidden = "false"] li.item');
-        $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] li.item');
-        $randomFilterNumber = rand(1, $filtersCount);
-        $I->waitForElementClickable("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)", 10);
-        $I->click("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)");
-        $I->waitForElementVisible("a.action.clear.filter-clear");
-        $I->waitPageLoad();
+        $I->waitAjaxLoad();
+        $filterName = $I->executeJS("return document.querySelector(\"div[aria-selected='true']\").innerText;");
+        if ($filterName == 'COLOR') {
+            $I->waitForElementVisible('div[aria-hidden = "false"] form div.item', 10);
+            $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] form div.item');
+            $randomFilterNumber = rand(1, $filtersCount);
+            $I->waitForElementClickable("div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a", 10);
+//            $I->click("div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a");
+            $I->executeJS("document.querySelector('div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a').click()");
+        } else {
+            $I->waitForElementVisible('div[aria-hidden = "false"] li.item', 10);
+            $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] li.item');
+            $randomFilterNumber = rand(1, $filtersCount);
+            $I->waitForElementClickable("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)", 10);
+            $I->executeJS("document.querySelector('div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)').click()");
+//            $I->click("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)");
+        }
+        $I->waitAjaxLoad();
+        $I->waitForElementVisible("a.action.clear.filter-clear", 10);
     }
 
     /**
@@ -158,8 +168,8 @@ class CategoryTester extends AcceptanceTester
     public function clearFilter()
     {
         $I = $this;
-        $I->connectJq();
-        $I->waitForElementVisible("a.action.clear.filter-clear", 10);
+        $I->executeJS('window.scrollTo(0,0);');
+        $I->waitForElementClickable("a.action.clear.filter-clear", 10);
         $I->click("a.action.clear.filter-clear");
         $I->waitForElementNotVisible("a.action.clear.filter-clear", 10);
     }
