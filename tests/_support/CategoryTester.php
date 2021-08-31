@@ -156,10 +156,23 @@ class CategoryTester extends AcceptanceTester
         $I->executeJS("document.querySelectorAll(\".filter-options-title\")[$randomDropdownFilter].click()");
         $I->waitForElementVisible('div[aria-hidden = "false"] li.item');
         $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] li.item'); //Writing variable with filters count
-        $randomFilterNumber = rand(0, $filtersCount - 1);
+        $randomFilterNumber = rand(1, $filtersCount);
+        $I->waitForElementClickable("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)", 10);
         $I->click("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)"); //Click on random filter
         $I->waitForElementVisible("a.action.clear.filter-clear"); //Waiting for the filter is selected
         $I->waitPageLoad();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function clearFilter()
+    {
+        $I = $this;
+        $I->connectJq();
+        $I->waitForElementVisible("a.action.clear.filter-clear", 10);
+        $I->click("a.action.clear.filter-clear");
+        $I->waitForElementNotVisible("a.action.clear.filter-clear", 10);
     }
 
 }
