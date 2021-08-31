@@ -144,25 +144,21 @@ class CategoryTester extends AcceptanceTester
         }
     }
 
-
     /**
      * @throws Exception
      */
-    public function selectRandomFilter() //TODO делать фильтр
+    public function selectRandomFilter()
     {
         $I = $this;
         $I->connectJq();
         $dropdownFiltersCount = $I->getElementsCountByCssSelector(".filter-options-title"); //Writing variable with dropdown filters count
         $randomDropdownFilter = rand(0, $dropdownFiltersCount - 1);
-        $I->click(".filter-options-title'][$randomDropdownFilter]"); //Open random filter group dropdown
-        $I->wait(1);
-        $filterName = $I->executeJS("return document.querySelectorAll(\".filter-options-title\")[$randomDropdownFilter].textContent");
-
+        $I->executeJS("document.querySelectorAll(\".filter-options-title\")[$randomDropdownFilter].click()");
+        $I->waitForElementVisible('div[aria-hidden = "false"] li.item');
         $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] li.item'); //Writing variable with filters count
-        $randomFilterNumber = Factory::create(); //Run Faker create generator
-        $randomFilterNumber = $randomFilterNumber->numberBetween(1, $filtersCount); //Converted to string and generate numberBetween
-        $I->click("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber) a"); //Click on random filter
-        $I->waitForElementVisible("//a[@class='action remove']"); //Waiting for the filter is selected
+        $randomFilterNumber = rand(0, $filtersCount - 1);
+        $I->click("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)"); //Click on random filter
+        $I->waitForElementVisible("a.action.clear.filter-clear"); //Waiting for the filter is selected
         $I->waitPageLoad();
     }
 
