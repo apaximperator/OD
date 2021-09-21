@@ -1,6 +1,5 @@
 <?php
 
-use Faker\Factory;
 use Page\Credentials;
 
 class CategoryTester extends AcceptanceTester
@@ -148,7 +147,6 @@ class CategoryTester extends AcceptanceTester
             $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] form div.item');
             $randomFilterNumber = rand(1, $filtersCount);
             $I->waitForElementClickable("div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a", 10);
-//            $I->click("div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a");
             $I->executeJS("document.querySelector('div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a').click()");
         } else {
             $I->waitForElementVisible('div[aria-hidden = "false"] li.item', 10);
@@ -156,7 +154,6 @@ class CategoryTester extends AcceptanceTester
             $randomFilterNumber = rand(1, $filtersCount);
             $I->waitForElementClickable("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)", 10);
             $I->executeJS("document.querySelector('div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)').click()");
-//            $I->click("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)");
         }
         $I->waitAjaxLoad();
         $I->waitForElementVisible("a.action.clear.filter-clear", 10);
@@ -174,4 +171,23 @@ class CategoryTester extends AcceptanceTester
         $I->waitForElementNotVisible("a.action.clear.filter-clear", 10);
     }
 
+    /**
+     *
+     */
+    public function openRandomCategoryWithPagination()
+    {
+        $I = $this;
+        $I->connectJq();
+        $categoryWithoutProducts = true;
+        while ($categoryWithoutProducts) {
+            $I->openRandomCategoryBySelector('div>div.menu-column li ul a');
+            try {
+                $I->seeElement(".bss-bt-quickview");
+                $I->seeElement(".pages-item-next a");
+                $categoryWithoutProducts = false;
+            } catch (Exception $e) {
+                $categoryWithoutProducts = true;
+            }
+        }
+    }
 }

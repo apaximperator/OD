@@ -174,4 +174,17 @@ class ProductTester extends CartTester
         $I->seeElement("//table[@id='product-comparison']"); //Check product compare table
     }
 
+
+    /**
+     * @throws Exception
+     */
+    public function openQuickViewForRandomProduct()     //TODO QuickView
+    {
+        $I = $this;
+        $productsCount = $I->getElementsCountByCssSelector('a.product span.product-image-container:first-child span div.bss-bt-quickview a');
+        $randomProductNumber = rand(0, $productsCount - 1);
+        $I->executeJS('document.querySelectorAll("a.product span.product-image-container:first-child span div.bss-bt-quickview a")['.$randomProductNumber.'].click()');
+        $I->waitForElementClickable('product-addtocart-button', 10);
+    }
+
 }

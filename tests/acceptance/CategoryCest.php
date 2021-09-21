@@ -56,5 +56,18 @@ class CategoryCest
         $C->sortBySelect();
     }
 
-    //TODO Написать тест для пагинации
+    /**
+     * @param CategoryTester $C
+     */
+    public function pagination(CategoryTester $C)
+    {
+        $C->amOnPage('/');
+        $C->openRandomCategoryWithPagination();
+        $C->executeJS('document.querySelectorAll(".pages-item-next > a")[1].click()');
+        $C->waitPageLoad(10);
+        $C->seeElement('.pages-item-previous a');
+        $C->executeJS('document.querySelectorAll(".pages-item-previous > a")[1].click()');
+        $C->waitPageLoad(10);
+        $C->dontSee('.pages-item-previous a');
+    }
 }
