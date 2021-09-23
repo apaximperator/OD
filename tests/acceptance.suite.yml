@@ -4,21 +4,26 @@
 # Perform tests in browser using the WebDriver or PhpBrowser.
 # If you need both WebDriver and PHPBrowser tests - create a separate suite.
 
-actor: AcceptanceTester
+class_name: AcceptanceTester
 modules:
-  enabled:
-    -
-      WebDriver:
-        port: 4444
-        browser: chrome
-        capabilities:
-          chromeOptions:
-            args: ["--no-sandbox", "--disable-dev-shm-usage"]
-        host: localhost
-        url: "https://www.bendonlingerie.com.au/"
-        window_size: 1920x1080
+    enabled:
+    - WebDriver
     - \Helper\Acceptance
     - tests\_support\AcceptanceHelper
+    config:
+      WebDriver:
+        url: "https://www.bendonlingerie.com.au/"
+        host: 'hub-cloud.browserstack.com'
+        port: 80
+        browser: chrome
+        capabilities:
+          os: Windows
+          os_version: 10
+          'browserstack.user': 'bsuser51405'
+          'browserstack.key': 'xssSorYMw6zhHGsfh7rR'
+          'browserstack.networkLogs' : 'true'
+          resolution: 1920x1080
+          window_size: 1920x1080
 step_decorators:
   - \Codeception\Step\TryTo
   - \Codeception\Step\ConditionalAssertion
