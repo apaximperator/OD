@@ -10,13 +10,13 @@ class CategoryTester extends AcceptanceTester
      */
     public function openRandomNotEmptyBrandCategory()
     {
-        $I = $this;
-        $I->connectJq();
+        $C = $this;
+        $C->connectJq();
         $brandCategoryWithoutProducts = true;
         while ($brandCategoryWithoutProducts) {
-            $I->openRandomBrandCategory();
+            $C->openRandomBrandCategory();
             try {
-                $I->seeElement("//div[@class='product-item-info']");
+                $C->seeElement("//div[@class='product-item-info']");
                 $brandCategoryWithoutProducts = false;
             } catch (Exception $e) {
                 $brandCategoryWithoutProducts = true;
@@ -29,15 +29,15 @@ class CategoryTester extends AcceptanceTester
      */
     private function openRandomBrandCategory()
     {
-        $I = $this;
-        $I->connectJq();
-        $I->moveMouseOver("//span[contains(text(),'Brand')]/ancestor::a");
-        $BrandCategoryCount = $I->getElementsCountByCssSelector('.menu-brand-block-content div .pagebuilder-column');
+        $C = $this;
+        $C->connectJq();
+        $C->moveMouseOver("//span[contains(text(),'Brand')]/ancestor::a");
+        $BrandCategoryCount = $C->getElementsCountByCssSelector('.menu-brand-block-content div .pagebuilder-column');
         $BrandCategoryNumber = rand(0, $BrandCategoryCount - 1);
-        $BrandLink = $I->executeJS('return document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].getAttribute("href");');
-        $I->executeJS('document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].click();');
-        $I->waitPageLoad();
-        $I->canSeeInCurrentUrl($BrandLink);
+        $BrandLink = $C->executeJS('return document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].getAttribute("href");');
+        $C->executeJS('document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].click();');
+        $C->waitPageLoad();
+        $C->canSeeInCurrentUrl($BrandLink);
     }
 
     /**
@@ -45,13 +45,13 @@ class CategoryTester extends AcceptanceTester
      */
     public function openRandomNotEmptyCLP()
     {
-        $I = $this;
-        $I->connectJq();
+        $C = $this;
+        $C->connectJq();
         $categoryWithoutProducts = true;
         while ($categoryWithoutProducts) {
-            $I->openRandomCategoryBySelector('div>div.menu-column li.parent>a');
+            $C->openRandomCategoryBySelector('div>div.menu-column li.parent>a');
             try {
-                $I->seeElement(".bss-bt-quickview");
+                $C->seeElement(".bss-bt-quickview");
                 $categoryWithoutProducts = false;
             } catch (Exception $e) {
                 $categoryWithoutProducts = true;
@@ -64,13 +64,13 @@ class CategoryTester extends AcceptanceTester
      */
     public function openRandomNotEmptyPLP()
     {
-        $I = $this;
-        $I->connectJq();
+        $C = $this;
+        $C->connectJq();
         $categoryWithoutProducts = true;
         while ($categoryWithoutProducts) {
-            $I->openRandomCategoryBySelector('div>div.menu-column li ul a');
+            $C->openRandomCategoryBySelector('div>div.menu-column li ul a');
             try {
-                $I->seeElement(".bss-bt-quickview");
+                $C->seeElement(".bss-bt-quickview");
                 $categoryWithoutProducts = false;
             } catch (Exception $e) {
                 $categoryWithoutProducts = true;
@@ -83,16 +83,16 @@ class CategoryTester extends AcceptanceTester
      */
     private function openRandomCategoryBySelector(string $selector)
     {
-        $I = $this;
-        $I->connectJq();
-        $I->moveMouseOver("//span[contains(text(),'Women')]/ancestor::a");
-        $CategoryCount = $I->getElementsCountByCssSelector($selector);
+        $C = $this;
+        $C->connectJq();
+        $C->moveMouseOver("//span[contains(text(),'Women')]/ancestor::a");
+        $CategoryCount = $C->getElementsCountByCssSelector($selector);
         $CategoryNumber = rand(0, $CategoryCount - 1);
-        $CategoryLink = $I->executeJS('return document.querySelectorAll("' . $selector . '")[' . $CategoryNumber . '].getAttribute("href");');
+        $CategoryLink = $C->executeJS('return document.querySelectorAll("' . $selector . '")[' . $CategoryNumber . '].getAttribute("href");');
         $CategoryLink = str_replace(Credentials::$URL, '', $CategoryLink);
-        $I->executeJS('document.querySelectorAll("' . $selector . '")[' . $CategoryNumber . '].click();');
-        $I->waitPageLoad();
-        $I->canSeeInCurrentUrl($CategoryLink);
+        $C->executeJS('document.querySelectorAll("' . $selector . '")[' . $CategoryNumber . '].click();');
+        $C->waitPageLoad();
+        $C->canSeeInCurrentUrl($CategoryLink);
     }
 
     /**
@@ -100,16 +100,16 @@ class CategoryTester extends AcceptanceTester
      */
     public function openRandomProduct()
     {
-        $I = $this;
-        $productsCount = $I->getElementsCountByCssSelector("li.product-item");
+        $C = $this;
+        $productsCount = $C->getElementsCountByCssSelector("li.product-item");
         $randomProductNumber = rand(0, $productsCount - 1);
-        $I->waitForElementClickable("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 10);
-        $productLink = $I->grabAttributeFrom("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 'href');
+        $C->waitForElementClickable("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 10);
+        $productLink = $C->grabAttributeFrom("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 'href');
         $productLink = str_replace(Credentials::$URL, '', $productLink);
-        $I->click("//*[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']");
-        $I->waitPageLoad();
-        $I->seeInCurrentUrl($productLink);
-        $I->waitForElementVisible("h1.page-title", 30);
+        $C->click("//*[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']");
+        $C->waitPageLoad();
+        $C->seeInCurrentUrl($productLink);
+        $C->waitForElementVisible("h1.page-title", 30);
     }
 
     /**
@@ -117,16 +117,16 @@ class CategoryTester extends AcceptanceTester
      */
     public function sortBySelect()
     {
-        $I = $this;
-        $I->connectJq();
-        $I->waitForElementVisible("#sorter", 10);
-        $sortCount = $I->getElementsCountByCssSelector("#sorter>option");
+        $C = $this;
+        $C->connectJq();
+        $C->waitForElementVisible("#sorter", 10);
+        $sortCount = $C->getElementsCountByCssSelector("#sorter>option");
         for ($optionByIndex = 0; $optionByIndex < $sortCount / 2; $optionByIndex++) {
-            $sortByOption = trim($I->executeJS("return document.querySelectorAll(\"#sorter option\")[$optionByIndex].innerText"));
-            $I->selectOption("//select[@id='sorter']", $sortByOption);
-            $I->waitPageLoad();
-            $I->wait(1);
-            $I->waitForElementVisible("select[id='sorter'] option:nth-of-type(" . ($optionByIndex + 1) . ")[selected='selected']", 10);
+            $sortByOption = trim($C->executeJS("return document.querySelectorAll(\"#sorter option\")[$optionByIndex].innerText"));
+            $C->selectOption("//select[@id='sorter']", $sortByOption);
+            $C->waitPageLoad();
+            $C->wait(1);
+            $C->waitForElementVisible("select[id='sorter'] option:nth-of-type(" . ($optionByIndex + 1) . ")[selected='selected']", 10);
         }
     }
 
@@ -135,28 +135,28 @@ class CategoryTester extends AcceptanceTester
      */
     public function selectRandomFilter()
     {
-        $I = $this;
-        $I->connectJq();
-        $dropdownFiltersCount = $I->getElementsCountByCssSelector(".filter-options-title");
+        $C = $this;
+        $C->connectJq();
+        $dropdownFiltersCount = $C->getElementsCountByCssSelector(".filter-options-title");
         $randomDropdownFilter = rand(0, $dropdownFiltersCount - 1);
-        $I->executeJS("document.querySelectorAll(\".filter-options-title\")[$randomDropdownFilter].click()");
-        $I->waitAjaxLoad();
-        $filterName = $I->executeJS("return document.querySelector(\"div[aria-selected='true']\").innerText;");
+        $C->executeJS("document.querySelectorAll(\".filter-options-title\")[$randomDropdownFilter].click()");
+        $C->waitAjaxLoad();
+        $filterName = $C->executeJS("return document.querySelector(\"div[aria-selected='true']\").innerText;");
         if ($filterName == 'COLOR') {
-            $I->waitForElementVisible('div[aria-hidden = "false"] form div.item', 10);
-            $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] form div.item');
+            $C->waitForElementVisible('div[aria-hidden = "false"] form div.item', 10);
+            $filtersCount = $C->getElementsCountByCssSelector('div[aria-hidden = "false"] form div.item');
             $randomFilterNumber = rand(1, $filtersCount);
-            $I->waitForElementClickable("div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a", 10);
-            $I->executeJS("document.querySelector('div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a').click()");
+            $C->waitForElementClickable("div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a", 10);
+            $C->executeJS("document.querySelector('div[aria-hidden = false] form div.item:nth-of-type($randomFilterNumber) a').click()");
         } else {
-            $I->waitForElementVisible('div[aria-hidden = "false"] li.item', 10);
-            $filtersCount = $I->getElementsCountByCssSelector('div[aria-hidden = "false"] li.item');
+            $C->waitForElementVisible('div[aria-hidden = "false"] li.item', 10);
+            $filtersCount = $C->getElementsCountByCssSelector('div[aria-hidden = "false"] li.item');
             $randomFilterNumber = rand(1, $filtersCount);
-            $I->waitForElementClickable("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)", 10);
-            $I->executeJS("document.querySelector('div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)').click()");
+            $C->waitForElementClickable("div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)", 10);
+            $C->executeJS("document.querySelector('div[aria-hidden = false] li.item:nth-of-type($randomFilterNumber)').click()");
         }
-        $I->waitAjaxLoad();
-        $I->waitForElementVisible("a.action.clear.filter-clear", 10);
+        $C->waitAjaxLoad();
+        $C->waitForElementVisible("a.action.clear.filter-clear", 10);
     }
 
     /**
@@ -164,11 +164,11 @@ class CategoryTester extends AcceptanceTester
      */
     public function clearFilter()
     {
-        $I = $this;
-        $I->executeJS('window.scrollTo(0,0);');
-        $I->waitForElementClickable("a.action.clear.filter-clear", 10);
-        $I->click("a.action.clear.filter-clear");
-        $I->waitForElementNotVisible("a.action.clear.filter-clear", 10);
+        $C = $this;
+        $C->executeJS('window.scrollTo(0,0);');
+        $C->waitForElementClickable("a.action.clear.filter-clear", 10);
+        $C->click("a.action.clear.filter-clear");
+        $C->waitForElementNotVisible("a.action.clear.filter-clear", 10);
     }
 
     /**
@@ -176,14 +176,14 @@ class CategoryTester extends AcceptanceTester
      */
     public function openRandomCategoryWithPagination()
     {
-        $I = $this;
-        $I->connectJq();
+        $C = $this;
+        $C->connectJq();
         $categoryWithoutProducts = true;
         while ($categoryWithoutProducts) {
-            $I->openRandomCategoryBySelector('div>div.menu-column li ul a');
+            $C->openRandomCategoryBySelector('div>div.menu-column li ul a');
             try {
-                $I->seeElement(".bss-bt-quickview");
-                $I->seeElement(".pages-item-next a");
+                $C->seeElement(".bss-bt-quickview");
+                $C->seeElement(".pages-item-next a");
                 $categoryWithoutProducts = false;
             } catch (Exception $e) {
                 $categoryWithoutProducts = true;
