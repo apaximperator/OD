@@ -6,15 +6,65 @@ class CartTester extends AcceptanceTester
     /**
      * @throws Exception
      */
-    public function openCartPage()
+    public function deleteProductFromMiniCart()
     {
-        $I = $this;
-        $I->click("//div[@class='item']//a[@class='action showcart']"); //Click on 'Minicart'
-        $I->waitForElementVisible("//div[@id='minicart-content-wrapper']//span[contains(text(),'My cart')]"); //Waiting for opening Minicart
-        $I->waitForElementClickable("//a[@class='action viewcart']"); //Waiting for 'VIEW AND EDIT CART' is clickable
-        $I->click("//a[@class='action viewcart']"); //Click on 'VIEW AND EDIT CART' button
-        $I->waitPageLoad();
-        $I->seeCurrentUrlEquals('/checkout/cart/'); //Check 'Cart' page URL
+        $Cart = $this;
+        $Cart->waitPageLoad();
+        $cartCountBefore = $Cart->grabTextFrom('a.showcart span.counter-number');
+        $Cart->click('a.showcart');
+        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->click('.action.delete');
+        $Cart->waitForElement(".action-primary.action-accept");
+        $Cart->click(".action-primary.action-accept");
+        $Cart->waitForText("YOUR CART IS EMPTY", 10, ".subtitle.empty");
+        $Cart->click('#btn-minicart-close');
+        $cartCountAfter = $Cart->grabTextFrom('a.showcart span.counter-number');
+        if ($cartCountBefore - 1 !== (int)$cartCountAfter) {
+            throw new Exception("QTY not correct");
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function deleteProductFromCart()
+    {
+        $Cart = $this;
+        $Cart->waitPageLoad();
+        $cartCountBefore = $Cart->grabTextFrom('a.showcart span.counter-number');
+        $Cart->click('a.showcart');
+        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->click("#top-cart-btn-checkout");
+        $Cart->waitPageLoad();
+        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->click('.action.action-delete');
+        $Cart->waitForText("Your Cart is Empty", 10, ".page-title");
+        $cartCountAfter = $Cart->grabTextFrom('a.showcart span.counter-number');
+        if ($cartCountBefore - 1 !== (int)$cartCountAfter) {
+            throw new Exception("QTY not correct");
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function changeProductQtyOnMiniCart()
+    {
+        $Cart = $this;
+        $Cart->waitPageLoad();
+        $cartCountBefore = $Cart->grabTextFrom('a.showcart span.counter-number');
+        $Cart->click('a.showcart');
+        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->selectOption('select.cart-item-qty', $cartCountBefore + 1);
+        $Cart->waitForElement(".icon.icon-update", 10);
+        $Cart->click(".icon.icon-update");
+        $Cart->click('#btn-minicart-close');
+        $Cart->reloadPage();
+        $Cart->waitPageLoad();
+        $cartCountAfter = $Cart->grabTextFrom('a.showcart span.counter-number');
+        if ($cartCountBefore + 1 !== (int)$cartCountAfter) {
+            throw new Exception("$cartCountAfter");
+        }
     }
 
     /**

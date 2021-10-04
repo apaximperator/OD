@@ -104,18 +104,6 @@ class ProductTester extends CartTester
     /**
      * @throws Exception
      */
-    public function addProductToCart()
-    {
-        $P = $this;
-        $P->waitForElementClickable("//button[@id='product-addtocart-button']", 30); //Waiting for 'Add to cart' button is clickable
-        $P->click("//button[@id='product-addtocart-button']"); //Click on 'Add to cart' button
-        $P->waitForElementVisible("//div[@class='item']//span[@class='counter qty']", 30); //Waiting for cart counter
-        $P->waitForElementVisible("//button[@id='product-addtocart-button' and @title='Added to Cart']", 30); //Check that 'Add to cart' button is changed title to 'Added to Cart'
-    }
-
-    /**
-     * @throws Exception
-     */
     public function removeAllProductsFromMinicart()  //Cycle with 'empty cart' check for remove all products from minicart
     {
         $P = $this;
@@ -193,6 +181,7 @@ class ProductTester extends CartTester
     public function selectRandomOption()
     {
         $P = $this;
+        $P->waitPageLoad();
         $P->waitForElement('select.super-attribute-select', 10);
         $P->seeElement('select.super-attribute-select');
         $selectCount = $P->getElementsCountByCssSelector("select.super-attribute-select"); //Get elements count by selector
@@ -201,9 +190,12 @@ class ProductTester extends CartTester
             $optionValueCount = $this->getElementsCountByCssSelector('select.super-attribute-select:nth-child(' . $selectByIndex . ')>option');
             $optionValueNumber = rand(1, $optionValueCount);
             $optionValue = $P->grabTextFrom('(//select[contains(@id,"attribute")])[' . $selectByIndex . ']//option[' . $optionValueNumber . ']'); //Writing variable with desired option
+            if($optionValue === "Select Size"){
+                $optionValueNumber+=$optionValueNumber;
+                $optionValue = $P->grabTextFrom('(//select[contains(@id,"attribute")])[' . $selectByIndex . ']//option[' . $optionValueNumber . ']'); //Writing variable with desired option
+            }
             $P->selectOption('(//select[contains(@id,"attribute")])[' . $selectByIndex . ']', $optionValue); //Select desired option
             $P->see($optionValue, '(//select[contains(@id,"attribute")])[' . $selectByIndex . ']');
-            $P->wait(.5);
         }
     }
 
@@ -243,7 +235,7 @@ class ProductTester extends CartTester
             $P->click('a.showcart');
             $P->waitForElement('.product-item__name a', 10);
             $P->see($productTitle, '.product-item__name a');
-            $P->wait(5);
+            $P->click('#btn-minicart-close');
         } else {
             throw new Exception("Cart qty doesn't change");
         }
@@ -264,6 +256,10 @@ class ProductTester extends CartTester
             $optionValueCount = $this->getElementsCountByCssSelector('select.super-attribute-select:nth-child(' . $selectByIndex . ')>option');
             $optionValueNumber = rand(1, $optionValueCount);
             $optionValue = $P->grabTextFrom('(//select[contains(@id,"attribute")])[' . $selectByIndex . ']//option[' . $optionValueNumber . ']'); //Writing variable with desired option
+            if($optionValue === "Select Size"){
+                $optionValueNumber+=$optionValueNumber;
+                $optionValue = $P->grabTextFrom('(//select[contains(@id,"attribute")])[' . $selectByIndex . ']//option[' . $optionValueNumber . ']'); //Writing variable with desired option
+            }
             $P->selectOption('(//select[contains(@id,"attribute")])[' . $selectByIndex . ']', $optionValue); //Select desired option
             $P->see($optionValue, '(//select[contains(@id,"attribute")])[' . $selectByIndex . ']');
         }
@@ -306,6 +302,7 @@ class ProductTester extends CartTester
             $P->click('.wishlist a');
             $P->waitForElement('a.product-item-link');
             $P->see($productTitle, 'a.product-item-link');
+            $P->click('#btn-minicart-close');
         } else {
             throw new Exception("Wishlist qty doesn't change");
         }
