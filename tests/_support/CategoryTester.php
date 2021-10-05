@@ -11,10 +11,15 @@ class CategoryTester extends AcceptanceTester
     public function openRandomNotEmptyBrandCategory()
     {
         $C = $this;
-        $C->connectJq();
         $brandCategoryWithoutProducts = true;
         while ($brandCategoryWithoutProducts) {
-            $C->openRandomBrandCategory();
+            $C->moveMouseOver("//span[contains(text(),'Brand')]/ancestor::a");
+            $BrandCategoryCount = $C->getElementsCountByCssSelector('.menu-brand-block-content div .pagebuilder-column');
+            $BrandCategoryNumber = rand(0, $BrandCategoryCount - 1);
+            $BrandLink = $C->executeJS('return document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].getAttribute("href");');
+            $C->executeJS('document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].click();');
+            $C->waitPageLoad();
+            $C->canSeeInCurrentUrl($BrandLink);
             try {
                 $C->seeElement("//div[@class='product-item-info']");
                 $brandCategoryWithoutProducts = false;
@@ -22,22 +27,6 @@ class CategoryTester extends AcceptanceTester
                 $brandCategoryWithoutProducts = true;
             }
         }
-    }
-
-    /**
-     *
-     */
-    private function openRandomBrandCategory()
-    {
-        $C = $this;
-        $C->connectJq();
-        $C->moveMouseOver("//span[contains(text(),'Brand')]/ancestor::a");
-        $BrandCategoryCount = $C->getElementsCountByCssSelector('.menu-brand-block-content div .pagebuilder-column');
-        $BrandCategoryNumber = rand(0, $BrandCategoryCount - 1);
-        $BrandLink = $C->executeJS('return document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].getAttribute("href");');
-        $C->executeJS('document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].click();');
-        $C->waitPageLoad();
-        $C->canSeeInCurrentUrl($BrandLink);
     }
 
     /**
@@ -93,23 +82,6 @@ class CategoryTester extends AcceptanceTester
         $C->executeJS('document.querySelectorAll("' . $selector . '")[' . $CategoryNumber . '].click();');
         $C->waitPageLoad();
         $C->canSeeInCurrentUrl($CategoryLink);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function openRandomProduct()
-    {
-        $C = $this;
-        $productsCount = $C->getElementsCountByCssSelector("li.product-item");
-        $randomProductNumber = rand(0, $productsCount - 1);
-        $C->waitForElementClickable("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 10);
-        $productLink = $C->grabAttributeFrom("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 'href');
-        $productLink = str_replace(Credentials::$URL, '', $productLink);
-        $C->click("//*[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']");
-        $C->waitPageLoad();
-        $C->seeInCurrentUrl($productLink);
-        $C->waitForElementVisible("h1.page-title", 30);
     }
 
     /**

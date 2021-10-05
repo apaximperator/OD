@@ -58,9 +58,9 @@ class CartTester extends AcceptanceTester
         $Cart->selectOption('select.cart-item-qty', $cartCountBefore + 1);
         $Cart->waitForElement(".icon.icon-update", 10);
         $Cart->click(".icon.icon-update");
+        $Cart->see((string)($cartCountBefore + 1), ".select2-selection__rendered");
         $Cart->click('#btn-minicart-close');
-        $Cart->reloadPage();
-        $Cart->waitPageLoad();
+        $Cart->wait(2);
         $cartCountAfter = $Cart->grabTextFrom('a.showcart span.counter-number');
         if ($cartCountBefore + 1 !== (int)$cartCountAfter) {
             throw new Exception("$cartCountAfter");
@@ -70,16 +70,53 @@ class CartTester extends AcceptanceTester
     /**
      * @throws Exception
      */
-    public function changeProductQtyOnCartPage()
+    public function changeProductQtyOnCart()
     {
-        $I = $this;
-        $I->waitForElementClickable("//tr[@class='item-info ']//a[contains(@class,'down')]"); //Waiting for 'down qty' is clickable
-        $I->click("//tr[@class='item-info ']//a[contains(@class,'down')]"); //Click on 'down qty' button
-        $I->clickWithLeftButton("//h1[@class='page-title']"); //Click to nowhere to change qty
-        $I->waitForElementVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to appear
-        $I->waitForElementNotVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to disappear
-        $I->waitPageLoad();
-        $I->seeElement("//tr[@class='item-info ']//input[@value='1']"); //Check that qty is changed
+        $Cart = $this;
+        $Cart->waitPageLoad();
+        $cartCountBefore = $Cart->grabTextFrom('a.showcart span.counter-number');
+        $Cart->click('a.showcart');
+        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->waitForElementClickable('#top-cart-btn-checkout', 10);
+        $Cart->click("#top-cart-btn-checkout");
+        $Cart->waitPageLoad();
+        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->selectOption('select.input-text.qty', $cartCountBefore + 1);
+        $Cart->waitAjaxLoad(10);
+        $Cart->see($cartCountBefore + 1, ".select2-selection__rendered");
+        $Cart->wait(2);
+        $cartCountAfter = $Cart->grabTextFrom('a.showcart span.counter-number');
+        if ($cartCountBefore + 1 !== (int)$cartCountAfter) {
+            throw new Exception("$cartCountAfter");
+        }
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function removeAllProductsFromMinicart()  //Cycle with 'empty cart' check for remove all products from minicart
+    {
+        $P = $this;
+        $P->click("//div[@class='item']//a[@class='action showcart']"); //Click on 'Minicart'
+        $P->waitForElementVisible("//div[@id='minicart-content-wrapper']//span[contains(text(),'My cart')]"); //Waiting for opening Minicart
+        $cartIsNotEmpty = true; //Creating a variable for an empty cart
+        while ($cartIsNotEmpty) { //Start cycle for clear cart
+            try {
+                $P->dontSee('YOUR CART IS EMPTY', "//strong[@class='subtitle empty']"); //Check that there is no 'YOUR CART IS EMPTY' text
+                $P->waitForElementClickable("(//a[@class='action delete'])[last()]"); //Waiting for remove last product button is clickable
+                $P->click("(//a[@class='action delete'])[last()]"); //Remove last product button
+                $P->waitForElementClickable("//button[@class='action-primary action-accept']"); //Waiting remove confirmation popup
+                $P->click("//button[@class='action-primary action-accept']"); //CLick on 'OK' button
+                $P->wait(1);
+                $P->waitAjaxLoad();
+                $cartIsNotEmpty = true; //Cart is not empty - false
+            } catch (Exception $e) {
+                $cartIsNotEmpty = false; //Cart is not empty - true
+            }
+        }
+        $P->click("//a[@id='btn-minicart-close']"); //Click to 'Continue shopping' button
+        $P->waitForElementNotVisible("//div[@class='item']//span[@class='counter qty']"); //Check than cart counter is not visible
     }
 
     /**
