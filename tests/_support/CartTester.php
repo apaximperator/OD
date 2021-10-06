@@ -21,7 +21,7 @@ class CartTester extends AcceptanceTester
         $Cart->wait(2);
         $cartCountAfter = $Cart->grabTextFrom('a.showcart span.counter-number');
         if ($cartCountBefore + 1 !== (int)$cartCountAfter) {
-            throw new Exception("$cartCountAfter");
+            throw new Exception("QTY doesn't change");
         }
     }
 
@@ -45,7 +45,7 @@ class CartTester extends AcceptanceTester
         $Cart->wait(2);
         $cartCountAfter = $Cart->grabTextFrom('a.showcart span.counter-number');
         if ($cartCountBefore + 1 !== (int)$cartCountAfter) {
-            throw new Exception("$cartCountAfter");
+            throw new Exception("QTY doesn't change");
         }
     }
 
@@ -144,4 +144,22 @@ class CartTester extends AcceptanceTester
         $Cart->waitForElementNotVisible("//div[@class='item']//span[@class='counter qty']");
     }
 
+    /**
+     * @throws Exception
+     */
+    public function addCouponToMiniCart() //TODO достать валидный купон и дописать тест
+    {
+        $Cart = $this;
+        $Cart->waitPageLoad();
+        $Cart->click('a.showcart');
+        $Cart->waitForElement("#block-discount-heading", 10);
+        $cartOrderTotalBefore = $Cart->grabTextFrom("#minicart-tax-order-total .price");
+        $Cart->executeJS("document.querySelectorAll('#discount-minicart-content')[0].style.display = 'block'");
+        $Cart->fillField('#discount-code-fake', \Page\Credentials::$COUPON);
+        $Cart->click(".action.action-apply");
+        $cartOrderTotalAfter = $Cart->grabTextFrom("#minicart-tax-order-total .price");
+        if ((int)$cartOrderTotalBefore === (int)$cartOrderTotalAfter) {
+            throw new Exception("Coupon not apply");
+        }
+    }
 }

@@ -14,5 +14,6 @@ class Credentials
     public static $PHONE = '6123456789';
     public static $ADDRESS = '72 Valley Road, Mount Eden, Auckland 1024';
     public static $COMPANY = 'Overdose.';
+    public static $COUPON = 'Test';
 
 }
