@@ -12,7 +12,7 @@ class ProductTester extends AcceptanceTester
     {
         $P = $this;
         $productsCount = $P->getElementsCountByCssSelector('a.product span.product-image-container:first-child span div.bss-bt-quickview a');
-        $randomProductNumber = rand(1, $productsCount);
+        $randomProductNumber = rand(0, $productsCount - 1);
         $P->executeJS('document.querySelectorAll("a.product span.product-image-container:first-child span div.bss-bt-quickview a")[' . $randomProductNumber . '].click()');
         $P->waitForElementNotVisible('.mfp-preloader', 10);
         $P->switchToIFrame('.mfp-iframe');
@@ -27,7 +27,8 @@ class ProductTester extends AcceptanceTester
     public function openRandomProduct()
     {
         $P = $this;
-        $productsCount = $P->getElementsCountByCssSelector("li.product-item");
+        $P->waitPageLoad(10);
+        $productsCount = $P->getElementsCountByCssSelector("li.item.product.product-item");
         $randomProductNumber = rand(1, $productsCount);
         $P->waitForElementClickable("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 10);
         $productLink = $P->grabAttributeFrom("//li[@class='item product product-item'][$randomProductNumber]//a[@class='product-item-link']", 'href');
@@ -117,7 +118,7 @@ class ProductTester extends AcceptanceTester
         for ($selectByIndex = 1; $selectByIndex <= $selectCount; $selectByIndex++) { //Start cycle for select
             $P->seeElement('(//select[contains(@id,"attribute")])[' . $selectByIndex . ']'); //Check select by index availability
             $optionValueCount = $this->getElementsCountByCssSelector('select.super-attribute-select:nth-child(' . $selectByIndex . ')>option');
-            $optionValueNumber = rand(1, $optionValueCount);
+            $optionValueNumber = rand(1, $optionValueCount - 1);
             $optionValue = $P->grabTextFrom('(//select[contains(@id,"attribute")])[' . $selectByIndex . ']//option[' . $optionValueNumber . ']'); //Writing variable with desired option
             if ($optionValue === "Select Size") {
                 $optionValueNumber += $optionValueNumber;
