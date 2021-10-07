@@ -10,7 +10,7 @@ class CategoryCest
     public function filters(CategoryTester $C)
     {
         $C->amOnPage('/');
-        $C->waitForElementVisible("//div[contains(@class,'login')]//a[contains(@class,'login')]", 30);
+        $C->waitPageLoad(10);
         $C->openRandomNotEmptyCLP();
         $C->selectRandomFilter();
         $C->clearFilter();
@@ -20,7 +20,6 @@ class CategoryCest
         $C->openRandomNotEmptyBrandCategory();
         $C->selectRandomFilter();
         $C->clearFilter();
-
     }
 
     /**
@@ -30,6 +29,7 @@ class CategoryCest
     public function sortByOnCLP(CategoryTester $C)
     {
         $C->amOnPage('/');
+        $C->waitPageLoad(10);
         $C->openRandomNotEmptyCLP();
         $C->sortBySelect();
     }
@@ -41,6 +41,7 @@ class CategoryCest
     public function sortByOnPLP(CategoryTester $C)
     {
         $C->amOnPage('/');
+        $C->waitPageLoad(10);
         $C->openRandomNotEmptyPLP();
         $C->sortBySelect();
     }
@@ -52,6 +53,7 @@ class CategoryCest
     public function sortByOnBrand(CategoryTester $C)
     {
         $C->amOnPage('/');
+        $C->waitPageLoad(10);
         $C->openRandomNotEmptyBrandCategory();
         $C->sortBySelect();
     }
@@ -62,6 +64,7 @@ class CategoryCest
     public function pagination(CategoryTester $C)
     {
         $C->amOnPage('/');
+        $C->waitPageLoad(10);
         $C->openRandomCategoryWithPagination();
         $C->executeJS('document.querySelectorAll(".pages-item-next > a")[1].click()');
         $C->waitPageLoad(10);

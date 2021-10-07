@@ -2,7 +2,7 @@
 
 use Page\Credentials;
 
-class ProductTester extends AcceptanceTester
+class ProductTester extends GlobalTester
 {
 
     /**
@@ -89,13 +89,14 @@ class ProductTester extends AcceptanceTester
         $productCountBefore = $P->grabTextFrom('a.showcart span.counter-number');
         $P->waitForElementClickable('#product-addtocart-button', 10);
         $productTitle = $P->executeJS("return document.querySelector('h1.page-title>span').textContent");
+        $productQTY = $P->grabTextFrom('#select2-qty-container');
         $P->click("#product-addtocart-button");
         $P->waitForText('ADDED', 10, '#product-addtocart-button span');
         $P->see('ADDED', '#product-addtocart-button span');
         $P->waitForElementNotVisible('.loading-mask', 10);
         $P->waitForElement('a.showcart span.counter-number', 10);
         $productCountAfter = $P->grabTextFrom('a.showcart span.counter-number');
-        if ((int)$productCountAfter === (int)$productCountBefore + 1) {
+        if ((int)$productCountAfter === (int)$productCountBefore + (int)$productQTY) {
             $P->click('a.showcart');
             $P->waitForElement('.product-item__name a', 10);
             $P->see($productTitle, '.product-item__name a');
@@ -151,6 +152,35 @@ class ProductTester extends AcceptanceTester
     /**
      * @throws Exception
      */
+    public function addProductToCartOnQuickView()
+    {
+        $P = $this;
+        $productCountBefore = $P->grabTextFrom('a.showcart span.counter-number');
+        $P->switchToIFrame('.mfp-iframe');
+        $P->waitForElementClickable('#product-addtocart-button', 10);
+        $productTitle = $P->executeJS("return document.querySelector('h1.page-title>span').textContent");
+        $productQTY = $P->grabTextFrom('#select2-qty-container');
+        $P->click("#product-addtocart-button");
+        $P->waitForText('ADDED', 10, '#product-addtocart-button span');
+        $P->see('ADDED', '#product-addtocart-button span');
+        $P->switchToIFrame();
+        $P->click('.mfp-close');
+        $P->waitForElementNotVisible('.loading-mask', 10);
+        $P->waitForElement('a.showcart span.counter-number', 10);
+        $productCountAfter = $P->grabTextFrom('a.showcart span.counter-number');
+        if ((int)$productCountAfter === (int)$productCountBefore + (int)$productQTY) {
+            $P->click('a.showcart');
+            $P->waitForElement('.product-item__name a', 10);
+            $P->see($productTitle, '.product-item__name a');
+            $P->click('#btn-minicart-close');
+        } else {
+            throw new Exception("Cart qty doesn't change");
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
     public function addRandomProductToWishListOnQuickView() //TODO Дописать когда вишлист будет работать корректно.
     {
         $P = $this;
@@ -169,34 +199,6 @@ class ProductTester extends AcceptanceTester
             $P->click('#btn-minicart-close');
         } else {
             throw new Exception("Wishlist qty doesn't change");
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function addProductToCartOnQuickView()
-    {
-        $P = $this;
-        $productCountBefore = $P->grabTextFrom('a.showcart span.counter-number');
-        $P->switchToIFrame('.mfp-iframe');
-        $P->waitForElementClickable('#product-addtocart-button', 10);
-        $productTitle = $P->executeJS("return document.querySelector('h1.page-title>span').textContent");
-        $P->click("#product-addtocart-button");
-        $P->waitForText('ADDED', 10, '#product-addtocart-button span');
-        $P->see('ADDED', '#product-addtocart-button span');
-        $P->switchToIFrame();
-        $P->click('.mfp-close');
-        $P->waitForElementNotVisible('.loading-mask', 10);
-        $P->waitForElement('a.showcart span.counter-number', 10);
-        $productCountAfter = $P->grabTextFrom('a.showcart span.counter-number');
-        if ((int)$productCountAfter === (int)$productCountBefore + 1) {
-            $P->click('a.showcart');
-            $P->waitForElement('.product-item__name a', 10);
-            $P->see($productTitle, '.product-item__name a');
-            $P->click('#btn-minicart-close');
-        } else {
-            throw new Exception("Cart qty doesn't change");
         }
     }
 }

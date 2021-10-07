@@ -2,7 +2,7 @@
 
 use Page\Credentials;
 
-class CategoryTester extends AcceptanceTester
+class CategoryTester extends GlobalTester
 {
 
     /**
