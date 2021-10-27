@@ -80,7 +80,6 @@ class CartTester extends GlobalTester
     {
         $Cart = $this;
         $Cart->click('a.showcart');
-        $Cart->waitForElement('.product-item__name a', 10);
         $cartIsNotEmpty = true; //Creating a variable for an empty cart
         while ($cartIsNotEmpty) { //Start cycle for clear cart
             try {
@@ -131,7 +130,6 @@ class CartTester extends GlobalTester
         $Cart = $this;
         $Cart->waitPageLoad();
         $Cart->click('a.showcart');
-        $Cart->waitForElement('.product-item__name a', 10);
         $Cart->click("#top-cart-btn-checkout");
         $Cart->waitPageLoad();
         $cartIsNotEmpty = true; //Creating a variable for an empty cart

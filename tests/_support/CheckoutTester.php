@@ -9,6 +9,47 @@ class CheckoutTester extends GlobalTester
     /**
      * @throws Exception
      */
+    public function goToCheckout()
+    {
+        $Ch = $this;
+        $Ch->waitPageLoad();
+        $Ch->click('a.showcart');
+        $Ch->waitForElement('.product-item__name a', 10);
+        $Ch->waitForElementClickable('#top-cart-btn-checkout', 10);
+        $Ch->click("#top-cart-btn-checkout");
+        $Ch->waitPageLoad();
+        $Ch->executeJS("document.querySelectorAll('.item .action.primary.checkout')[1].click()");
+        $Ch->waitPageLoad();
+        $Ch->waitForElement('.product-item__name', 10);
+    }
+
+    public function loginFromGuest(){
+
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function loginFromCheckOut(){
+        $Ch = $this;
+        $Ch->waitPageLoad();
+        $Ch->fillField('#customer-email',Credentials::$EMAIL);
+        $Ch->wait(5);
+        $Ch->waitAjaxLoad();
+        $Ch->seeInField('#customer-email',Credentials::$EMAIL);
+        $Ch->waitForElement('#customer-password', 10);
+        $Ch->fillField("#customer-password", Credentials::$PASSWORD);
+        $Ch->waitAjaxLoad();
+        $Ch->seeInField('#customer-password', Credentials::$PASSWORD);
+        $Ch->waitAjaxLoad();
+        $Ch->executeJS("document.querySelectorAll('.action.secondary.login')[0].click()");
+        $Ch->waitForElementNotVisible('#customer-email',5);
+
+    }
+
+    /**
+     * @throws Exception
+     */
     public function randomDeliveryMethod() //Select random delivery method and go to payment page
     {
         $I = $this;
@@ -62,7 +103,7 @@ class CheckoutTester extends GlobalTester
         $I->click("//tr[@class='row delivery-method-row'][1]"); //Click on random delivery method
         $I->waitAjaxLoad(15);
         $I->fillField("//div[@class='payment-option-inner']//textarea", 'automation test'); //Enter 'Delivery Instructions' field
-        $I->waitForElementClickable("//button[contains(@class,'continue')]",10); //Waiting for 'Continue to review & payment' button is clickable
+        $I->waitForElementClickable("//button[contains(@class,'continue')]", 10); //Waiting for 'Continue to review & payment' button is clickable
         $I->click("//button[contains(@class,'continue')]"); //Click on 'Continue to review & payment' button
         $I->waitForElementVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to appear
         $I->waitForElementNotVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to disappear
