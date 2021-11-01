@@ -12,11 +12,11 @@ class CartTester extends GlobalTester
         $Cart->waitPageLoad();
         $cartCountBefore = $Cart->grabTextFrom('a.showcart span.counter-number');
         $Cart->click('a.showcart');
-        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->waitForElementVisible('.product-item__name a', 10);
         $cartProductQTY = $Cart->grabTextFrom('.select2-selection__rendered');
         $Cart->selectOption('select.cart-item-qty', (int)$cartProductQTY + 1);
-        $Cart->waitForElement(".icon.icon-update", 10);
-        $Cart->click(".icon.icon-update");
+        $Cart->waitForElementClickable("button.update-cart-item", 10);
+        $Cart->click("button.update-cart-item");
         $Cart->see(((int)$cartProductQTY + 1), ".select2-selection__rendered");
         $Cart->click('#btn-minicart-close');
         $Cart->wait(3);
@@ -35,11 +35,11 @@ class CartTester extends GlobalTester
         $Cart->waitPageLoad();
         $cartCountBefore = $Cart->grabTextFrom('a.showcart span.counter-number');
         $Cart->click('a.showcart');
-        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->waitForElementVisible('.product-item__name a', 10);
         $Cart->waitForElementClickable('#top-cart-btn-checkout', 10);
         $Cart->click("#top-cart-btn-checkout");
         $Cart->waitPageLoad();
-        $Cart->waitForElement('.product-item-name', 10);
+        $Cart->waitForElementVisible('.product-item-name', 10);
         $cartProductQTY = $Cart->executeJS('return document.querySelectorAll(".select2-selection__rendered")[0].textContent');
         $Cart->selectOption('select.input-text.qty', ((int)$cartProductQTY + 1));
         $Cart->waitAjaxLoad(10);
@@ -60,7 +60,7 @@ class CartTester extends GlobalTester
         $Cart->waitPageLoad();
         $cartCountBefore = $Cart->grabTextFrom('a.showcart span.counter-number');
         $Cart->click('a.showcart');
-        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->waitForElementVisible('.product-item__name a', 10);
         $cartProductCount = $Cart->grabTextFrom('.select2-selection__rendered');
         $Cart->click('.action.delete');
         $Cart->waitForElementClickable(".action-primary.action-accept", 10);
@@ -86,7 +86,7 @@ class CartTester extends GlobalTester
                 $Cart->dontSee('YOUR CART IS EMPTY', ".subtitle.empty"); //Check that there is no 'YOUR CART IS EMPTY' text
                 $Cart->waitForElementClickable("(//a[@class='action delete'])[last()]"); //Waiting for remove last product button is clickable
                 $Cart->click("(//a[@class='action delete'])[last()]"); //Remove last product button
-                $Cart->waitForElement(".action-primary.action-accept", 10);
+                $Cart->waitForElementClickable(".action-primary.action-accept", 10);
                 $Cart->click(".action-primary.action-accept");
                 $Cart->waitAjaxLoad();
                 $cartIsNotEmpty = true; //Cart is not empty - false
@@ -108,11 +108,11 @@ class CartTester extends GlobalTester
         $Cart->waitPageLoad();
         $cartCountBefore = $Cart->grabTextFrom('a.showcart span.counter-number');
         $Cart->click('a.showcart');
-        $Cart->waitForElement('.product-item__name a', 10);
+        $Cart->waitForElementVisible('.product-item__name a', 10);
         $cartProductQTY = $Cart->executeJS('return document.querySelectorAll(".select2-selection__rendered")[0].textContent');
         $Cart->click("#top-cart-btn-checkout");
         $Cart->waitPageLoad();
-        $Cart->waitForElement('.product-item-name', 10);
+        $Cart->waitForElementVisible('.product-item-name', 10);
         $Cart->click('.action.action-delete');
         $Cart->waitForText("Your Cart is Empty", 10, ".page-title");
         $cartCountAfter = $Cart->grabTextFrom('a.showcart span.counter-number');
@@ -154,7 +154,7 @@ class CartTester extends GlobalTester
         $Cart = $this;
         $Cart->waitPageLoad();
         $Cart->click('a.showcart');
-        $Cart->waitForElement("#block-discount-heading", 10);
+        $Cart->waitForElementVisible("#block-discount-heading", 10);
         $cartOrderTotalBefore = $Cart->grabTextFrom("#minicart-tax-order-total .price");
         $Cart->executeJS("document.querySelectorAll('#discount-minicart-content')[0].style.display = 'block'");
         $Cart->fillField('#discount-code-fake', \Page\Credentials::$COUPON);

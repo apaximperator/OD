@@ -46,7 +46,7 @@ class ProductTester extends GlobalTester
     {
         $P = $this;
         $P->waitPageLoad();
-        $P->waitForElement('select.super-attribute-select', 10);
+        $P->waitForElementVisible('select.super-attribute-select', 10);
         $P->seeElement('select.super-attribute-select');
         $selectCount = $P->getElementsCountByCssSelector("select.super-attribute-select"); //Get elements count by selector
         for ($selectByIndex = 1; $selectByIndex <= $selectCount; $selectByIndex++) { //Start cycle for select
@@ -69,7 +69,7 @@ class ProductTester extends GlobalTester
     public function selectRandomQTY()
     {
         $P = $this;
-        $P->waitForElement('select#qty', 10);
+        $P->waitForElementVisible('select#qty', 10);
         $P->seeElement('select#qty');
         $QTYValueCount = $this->getElementsCountByCssSelector('select#qty>option');
         $QTYValueNumber = rand(1, $QTYValueCount);
@@ -94,11 +94,11 @@ class ProductTester extends GlobalTester
         $P->waitForText('ADDED', 10, '#product-addtocart-button span');
         $P->see('ADDED', '#product-addtocart-button span');
         $P->waitForElementNotVisible('.loading-mask', 10);
-        $P->waitForElement('a.showcart span.counter-number', 10);
+        $P->waitForElementVisible('a.showcart span.counter-number', 10);
         $productCountAfter = $P->grabTextFrom('a.showcart span.counter-number');
         if ((int)$productCountAfter === (int)$productCountBefore + (int)$productQTY) {
             $P->click('a.showcart');
-            $P->waitForElement('.product-item__name a', 10);
+            $P->waitForElementVisible('.product-item__name a', 10);
             $P->see($productTitle, '.product-item__name a');
             $P->click('#btn-minicart-close');
         } else {
@@ -113,7 +113,7 @@ class ProductTester extends GlobalTester
     {
         $P = $this;
         $P->switchToIFrame('.mfp-iframe');
-        $P->waitForElement('select.super-attribute-select', 10);
+        $P->waitForElementVisible('select.super-attribute-select', 10);
         $P->seeElement('select.super-attribute-select');
         $selectCount = $P->getElementsCountByCssSelector("select.super-attribute-select"); //Get elements count by selector
         for ($selectByIndex = 1; $selectByIndex <= $selectCount; $selectByIndex++) { //Start cycle for select
@@ -138,7 +138,7 @@ class ProductTester extends GlobalTester
     {
         $P = $this;
         $P->switchToIFrame('.mfp-iframe');
-        $P->waitForElement('select#qty', 10);
+        $P->waitForElementVisible('select#qty', 10);
         $P->seeElement('select#qty');
         $QTYValueCount = $this->getElementsCountByCssSelector('select#qty>option');
         $QTYValueNumber = rand(1, $QTYValueCount);
@@ -166,11 +166,11 @@ class ProductTester extends GlobalTester
         $P->switchToIFrame();
         $P->click('.mfp-close');
         $P->waitForElementNotVisible('.loading-mask', 10);
-        $P->waitForElement('a.showcart span.counter-number', 10);
+        $P->waitForElementVisible('a.showcart span.counter-number', 10);
         $productCountAfter = $P->grabTextFrom('a.showcart span.counter-number');
         if ((int)$productCountAfter === (int)$productCountBefore + (int)$productQTY) {
             $P->click('a.showcart');
-            $P->waitForElement('.product-item__name a', 10);
+            $P->waitForElementVisible('.product-item__name a', 10);
             $P->see($productTitle, '.product-item__name a');
             $P->click('#btn-minicart-close');
         } else {
@@ -194,7 +194,7 @@ class ProductTester extends GlobalTester
         $productWishListCountAfter = $P->grabTextFrom('.wishlist a .counter.qty');
         if ((int)$productWishListCountAfter === (int)$productWishListCountBefore + 1) {
             $P->click('.wishlist a');
-            $P->waitForElement('a.product-item-link');
+            $P->waitForElementVisible('a.product-item-link');
             $P->see($productTitle, 'a.product-item-link');
             $P->click('#btn-minicart-close');
         } else {

@@ -19,7 +19,7 @@ class CategoryTester extends GlobalTester
             $BrandLink = $C->executeJS('return document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].getAttribute("href");');
             $C->executeJS('document.querySelectorAll(".menu-brand-block-content div .pagebuilder-column figure a")[' . $BrandCategoryNumber . '].click();');
             $C->waitPageLoad();
-            $C->canSeeInCurrentUrl($BrandLink);
+            $C->seeInCurrentUrl($BrandLink);
             try {
                 $C->seeElement("//div[@class='product-item-info']");
                 $brandCategoryWithoutProducts = false;
@@ -81,7 +81,7 @@ class CategoryTester extends GlobalTester
         $CategoryLink = str_replace(Credentials::$URL, '', $CategoryLink);
         $C->executeJS('document.querySelectorAll("' . $selector . '")[' . $CategoryNumber . '].click();');
         $C->waitPageLoad();
-        $C->canSeeInCurrentUrl($CategoryLink);
+        $C->seeInCurrentUrl($CategoryLink);
     }
 
     /**
