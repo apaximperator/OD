@@ -44,7 +44,6 @@ class CheckoutTester extends GlobalTester
         $Ch->waitAjaxLoad();
         $Ch->executeJS("document.querySelectorAll('.action.secondary.login')[0].click()");
         $Ch->waitForElementNotVisible('#customer-email',5);
-
     }
 
     /**

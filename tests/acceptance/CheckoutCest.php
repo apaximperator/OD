@@ -23,6 +23,11 @@ class CheckoutCest
         $Ch->loginFromCheckOut();
     }
 
+    public function checkOutForAlreadyLoggedUser(GlobalTester $G, CartTester $Cart, CategoryTester $C, ProductTester $P, CheckoutTester $Ch)
+    {
+
+    }
+
     /**
      * @param CartTester $I
      * @param GlobalTester $G
