@@ -49,6 +49,7 @@ class CheckoutTester extends GlobalTester
         $Ch->wait(10);
         $Ch->waitPageLoad();
         $Ch->click("//div[@name='shippingAddress.telephone']"); //Click to  phone number field
+        $Ch->wait(2);
         $Ch->fillField("//div[@name='shippingAddress.telephone']//input[@name='telephone']", Credentials::$PHONE); //Add phone number
         $Ch->wait(5);
     }

@@ -160,7 +160,7 @@ class GlobalTester extends AcceptanceTester
         $G->click("#search");
         $G->fillField("#search", "qwerreqwerqwer");
         $G->waitForText("Please try another search term...", 30, ".klevuNoResults-message");
-        $G->see('Please try another search term...',".klevuNoResults-message");
+        $G->see('Please try another search term...', ".klevuNoResults-message");
         $G->amOnPage("/");
     }
 
@@ -176,7 +176,111 @@ class GlobalTester extends AcceptanceTester
         $G->fillField("#search", "qwerreqwerqwer");
         $G->pressKey('#search', WebDriverKeys::ENTER);
         $G->waitForText("Please try another search term...", 30, ".kuNoResults-lp-message");
-        $G->see('Please try another search term...',".kuNoResults-lp-message");
+        $G->see('Please try another search term...', ".kuNoResults-lp-message");
         $G->amOnPage("/");
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function clearAdditionalAddresses()
+    {
+        $G = $this;
+        $G->amOnPage('/');
+        $G->waitPageLoad();
+        $G->waitForElementClickable('a[class="action link-account customer-account-menu"]');
+        $G->click('a[class="action link-account customer-account-menu"]');
+        $G->waitForElementClickable("//ul[@id='customer-account-menu']/li/a[contains(.,'My Addresses')]");
+        $G->click("//ul[@id='customer-account-menu']/li/a[contains(.,'My Addresses')]");
+        $G->waitPageLoad();
+        $G->waitForElementClickable('button[class="action secondary add"]');
+        $additionalAddressesEmpty = true;
+        while ($additionalAddressesEmpty) {
+            try {
+                $G->seeElement('table[id="additional-addresses-table"]');
+                $G->waitForElementClickable("(//a[@class='action delete icon icon-trash'])[last()]");
+                $G->click("(//a[@class='action delete icon icon-trash'])[last()]");
+                $G->waitForElementClickable(".action-primary.action-accept", 10);
+                $G->click(".action-primary.action-accept");
+                $G->waitAjaxLoad();
+                $additionalAddressesEmpty = true;
+            } catch (Exception $e) {
+                $additionalAddressesEmpty = false;
+            }
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function editAdditionalAddresses()
+    {
+        $G = $this;
+        $G->amOnPage('/');
+        $G->waitPageLoad();
+        $G->waitForElementClickable('a[class="action link-account customer-account-menu"]');
+        $G->click('a[class="action link-account customer-account-menu"]');
+        $G->waitForElementClickable("//ul[@id='customer-account-menu']/li/a[contains(.,'My Addresses')]");
+        $G->click("//ul[@id='customer-account-menu']/li/a[contains(.,'My Addresses')]");
+        $G->waitPageLoad();
+        $G->waitForElementClickable('td a[class="action edit"]');
+        $oldPhone = $G->grabTextFrom('td[class="col phone"]');
+        $G->click('td a[class="action edit"]');
+        $G->waitPageLoad();
+        $G->waitForElementClickable('button[class="action save primary"]');
+        $G->click("//input[@id='street_1']"); //Click to shipping address field
+        $G->wait(2);
+        $G->fillField("//input[@id='street_1']", '1000'); //Add shipping index to the field
+        $G->wait(5);
+        $addressList = rand(1, 5);
+        $G->click("//ul/li[@id][$addressList]"); //Choose random shipping address
+        $G->wait(2);
+        $G->waitPageLoad();
+        $G->click("//input[@id='telephone']"); //Click to  phone number field
+        $G->wait(2);
+        $G->fillField("//input[@id='telephone']", $oldPhone+1); //Add phone number
+        $G->waitForElementClickable('button[class="action save primary"]');
+        $G->click('button[class="action save primary"]');
+        $G->waitPageLoad();
+        $G->waitForElementVisible('table[id="additional-addresses-table"]');
+        $newPhone = $G->grabTextFrom('td[class="col phone"]');
+        If($oldPhone == $newPhone){
+            throw new Exception('Edit doesn\'t work correct');
+        }
+
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function addAdditionalAddresses()
+    {
+        $G = $this;
+        $G->amOnPage('/');
+        $G->waitPageLoad();
+        $G->waitForElementClickable('a[class="action link-account customer-account-menu"]');
+        $G->click('a[class="action link-account customer-account-menu"]');
+        $G->waitForElementClickable("//ul[@id='customer-account-menu']/li/a[contains(.,'My Addresses')]");
+        $G->click("//ul[@id='customer-account-menu']/li/a[contains(.,'My Addresses')]");
+        $G->waitPageLoad();
+        $G->waitForElementClickable('button[class="action secondary add"]');
+        $G->click('button[class="action secondary add"]');
+        $G->waitPageLoad();
+        $G->waitForElementClickable('button[class="action save primary"]');
+        $G->click("//input[@id='street_1']"); //Click to shipping address field
+        $G->wait(2);
+        $G->fillField("//input[@id='street_1']", '1000'); //Add shipping index to the field
+        $G->wait(5);
+        $addressList = rand(1, 5);
+        $G->click("//ul/li[@id][$addressList]"); //Choose random shipping address
+        $G->wait(2);
+        $G->waitPageLoad();
+        $G->click("//input[@id='telephone']"); //Click to  phone number field
+        $G->wait(2);
+        $G->fillField("//input[@id='telephone']", '3222333'); //Add phone number
+        $G->waitForElementClickable('button[class="action save primary"]');
+        $G->click('button[class="action save primary"]');
+        $G->waitPageLoad();
+        $G->waitForElementVisible('table[id="additional-addresses-table"]');
     }
 }
