@@ -179,5 +179,4 @@ class GlobalTester extends AcceptanceTester
         $G->see('Please try another search term...',".kuNoResults-lp-message");
         $G->amOnPage("/");
     }
-
 }

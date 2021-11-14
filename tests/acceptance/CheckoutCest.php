@@ -2,7 +2,6 @@
 
 class CheckoutCest
 {
-
     /**
      * @param GlobalTester $G
      * @param CartTester $Cart
@@ -11,7 +10,7 @@ class CheckoutCest
      * @param CheckoutTester $Ch
      * @throws Exception
      */
-    public function checkOutForNonLoggedUser(GlobalTester $G, CartTester $Cart, CategoryTester $C, ProductTester $P, CheckoutTester $Ch)
+    public function checkOutWithLogin(GlobalTester $G, CartTester $Cart, CategoryTester $C, ProductTester $P, CheckoutTester $Ch)
     {
         $G->amOnPage('/');
         $Cart->removeAllProductsFromMinicart();
@@ -21,92 +20,134 @@ class CheckoutCest
         $P->addProductToCart();
         $Ch->goToCheckout();
         $Ch->loginFromCheckOut();
+        $Ch->waitForElementVisible('div.step-title', 10);
+        $Ch->randomDeliveryMethod();
+        $Ch->paymentMethodByArgument("laybuy_payment", 'Laybuy');
     }
 
+    /**
+     * @param GlobalTester $G
+     * @param CartTester $Cart
+     * @param CategoryTester $C
+     * @param ProductTester $P
+     * @param CheckoutTester $Ch
+     * @throws Exception
+     */
+    public function checkOutForGuest(GlobalTester $G, CartTester $Cart, CategoryTester $C, ProductTester $P, CheckoutTester $Ch)
+    {
+        $G->amOnPage('/');
+        $Cart->removeAllProductsFromMinicart();
+        $C->openRandomNotEmptyPLP();
+        $P->openRandomProduct();
+        $P->selectRandomOption();
+        $P->addProductToCart();
+        $Ch->goToCheckout();
+        $Ch->userGuestData();
+        $Ch->randomDeliveryMethod();
+        $Ch->paymentMethodByArgument("laybuy_payment", 'Laybuy');
+    }
+
+    /**
+     * @param GlobalTester $G
+     * @param CartTester $Cart
+     * @param CategoryTester $C
+     * @param ProductTester $P
+     * @param CheckoutTester $Ch
+     * @throws Exception
+     */
     public function checkOutForAlreadyLoggedUser(GlobalTester $G, CartTester $Cart, CategoryTester $C, ProductTester $P, CheckoutTester $Ch)
     {
-
-    }
-
-    /**
-     * @param CartTester $I
-     * @param GlobalTester $G
-     * @param CheckoutTester $C
-     * @throws Exception
-     */
-    public function creditCard(CartTester $I, GlobalTester $G, CheckoutTester $C)
-    {
-        $I->amOnPage('/');
+        $G->amOnPage('/');
         $G->login();
-        $I->removeAllProductsFromCart();
-        $G->addProductToCartFromCategory(1, '/shop-by-category/supplement-stacks');
-        $C->processCheckoutForLoggedUser('Credit Card');
+        $Cart->removeAllProductsFromMinicart();
+        $C->openRandomNotEmptyPLP();
+        $P->openRandomProduct();
+        $P->selectRandomOption();
+        $P->addProductToCart();
+        $Ch->goToCheckout();
+        $Ch->waitForElementVisible('div.step-title', 10);
+        $Ch->randomDeliveryMethod();
+        $Ch->paymentMethodByArgument("laybuy_payment", 'Laybuy');
     }
 
     /**
-     * @param CartTester $I
+     * @param CartTester $Cart
+     * @param CategoryTester $C
      * @param GlobalTester $G
-     * @param CheckoutTester $C
+     * @param ProductTester $P
+     * @param CheckoutTester $Ch
      * @throws Exception
      */
-    public function layBuy(CartTester $I, GlobalTester $G, CheckoutTester $C)
+    public function creditCard(CartTester $Cart, CategoryTester $C, GlobalTester $G, ProductTester $P, CheckoutTester $Ch)
     {
-        $I->amOnPage('/');
+        $G->amOnPage('/');
         $G->login();
-        $I->removeAllProductsFromCart();
-        $G->addProductToCartFromCategory(1, '/shop-by-category/supplement-stacks');
-        $C->processCheckoutForLoggedUser('LAYBUY');
+        $Cart->removeAllProductsFromMinicart();
+        $C->openRandomNotEmptyPLP();
+        $P->openRandomProduct();
+        $P->selectRandomOption();
+        $P->addProductToCart();
+        $Ch->processCheckoutForLoggedUser('paymentexpress_pxpay2', 'Windcave Payment Page');
     }
 
     /**
-     * @param CategoryTester $I
-     * @throws Exception
-     */
-//    public function dps(CategoryTester $I)
-//    {
-//        $I->amOnPage('/'); //Open Homepage
-//        try {
-//            $I->dontSeeElement("//div[contains(@class,'login')]//a[contains(@class,'login')]"); //If I'm logged in then don't need to login
-//        } catch (Exception $e) {
-//            $I->login();
-//        }
-//        $I->openRandomNotEmptyCategoryWithProductWithAddToCartOrQuickAddButton();
-//        $I->openRandomProductWithAddToCartOrQuickAddButton(); //Open random product with 'Add to cart' or 'Quick add' button
-//        $I->selectOptionIfPresent(); //Select desired option if present, if is no select on the page then do nothing
-//        $I->addProductToCartAndGoToCheckout(); //Add product to cart and go to checkout page
-//        $I->randomDeliveryMethod();//Select random delivery method and go to payment page
-//        $I->paymentMethodByArgument("//input[@id='overdose_odpxpay2']/parent::div/label", "//div[@id='PxPayAccount2AccountAuth_Logo']", "/pxmi3/"); //Select 'DPS' payment method and check logo and URL on DPS method page
-//        $I->removeAllProductsFromCart(); //Remove products from cart until you get 'YOUR CART IS EMPTY' text
-//    }
-
-    /**
-     * @param CartTester $I
+     * @param CartTester $Cart
+     * @param CategoryTester $C
      * @param GlobalTester $G
-     * @param CheckoutTester $C
+     * @param ProductTester $P
+     * @param CheckoutTester $Ch
      * @throws Exception
      */
-    public function humm(CartTester $I, GlobalTester $G, CheckoutTester $C)
+    public function layBuy(CartTester $Cart, CategoryTester $C, GlobalTester $G, ProductTester $P, CheckoutTester $Ch)
     {
-        $I->amOnPage('/');
+        $G->amOnPage('/');
         $G->login();
-        $I->removeAllProductsFromCart();
-        $G->addProductToCartFromCategory(1, '/shop-by-category/supplement-stacks');
-        $C->processCheckoutForLoggedUser('Humm');
+        $Cart->removeAllProductsFromMinicart();
+        $C->openRandomNotEmptyPLP();
+        $P->openRandomProduct();
+        $P->selectRandomOption();
+        $P->addProductToCart();
+        $Ch->processCheckoutForLoggedUser("laybuy_payment", 'Laybuy');
     }
 
-//    /**
-//     * @param CategoryTester $I
-//     * @throws Exception
-//     */
-//    public function clearCart(CategoryTester $I)
-//    {
-//        $I->amOnPage('/'); //Open Homepage
-//        try {
-//            $I->dontSeeElement("//div[contains(@class,'login')]//a[contains(@class,'login')]"); //If I'm logged in then don't need to login
-//        } catch (Exception $e) {
-//            $I->login();
-//        }
-//        $I->removeAllProductsFromCart(); //Remove products from cart until you get 'YOUR CART IS EMPTY' text
-//    }
+    /**
+     * @param CartTester $Cart
+     * @param CategoryTester $C
+     * @param GlobalTester $G
+     * @param ProductTester $P
+     * @param CheckoutTester $Ch
+     * @throws Exception
+     */
+    public function paypal(CartTester $Cart, CategoryTester $C, GlobalTester $G, ProductTester $P, CheckoutTester $Ch)
+    {
+        $G->amOnPage('/');
+        $G->login();
+        $Cart->removeAllProductsFromMinicart();
+        $C->openRandomNotEmptyPLP();
+        $P->openRandomProduct();
+        $P->selectRandomOption();
+        $P->addProductToCart();
+        $Ch->processCheckoutForLoggedUser("paypal_express", 'Log in to your PayPal account');
+    }
+
+    /**
+     * @param CartTester $Cart
+     * @param CategoryTester $C
+     * @param GlobalTester $G
+     * @param ProductTester $P
+     * @param CheckoutTester $Ch
+     * @throws Exception
+     */
+    public function afterpay(CartTester $Cart, CategoryTester $C, GlobalTester $G, ProductTester $P, CheckoutTester $Ch)
+    {
+        $G->amOnPage('/');
+        $G->login();
+        $Cart->removeAllProductsFromMinicart();
+        $C->openRandomNotEmptyPLP();
+        $P->openRandomProduct();
+        $P->selectRandomOption();
+        $P->addProductToCart();
+        $Ch->processCheckoutForLoggedUser("afterpaypayovertime", "Afterpay");
+    }
 
 }

@@ -60,4 +60,13 @@ class AcceptanceTester extends Actor
             }");
     }
 
+    /**
+     * @param $selector
+     * @return mixed
+     */
+    public function clickOnElementByCssSelector($selector) //Hard click on element through CSS selector, for example, you can click on ::before and ::after pseudo-elements
+    {
+        $I = $this;
+        return $I->executeJS("jQuery('$selector').trigger('click')");
+    }
 }

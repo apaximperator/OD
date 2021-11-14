@@ -23,27 +23,57 @@ class CheckoutTester extends GlobalTester
         $Ch->waitForElement('.product-item__name', 10);
     }
 
-    public function loginFromGuest(){
-
+    public function userGuestData()
+    {
+        $Ch = $this;
+        $email = Factory::create()->safeEmail; //Generate fake email
+        $Ch->fillField("//input[contains(@id,'customer-email')]", $email); //Add email to the field
+        $Ch->wait(5);
+        $Ch->click("//div[contains(@name,'firstname')]"); //Click to first name field
+        $Ch->wait(2);
+        $Ch->fillField("//div[@name='shippingAddress.firstname']//input[@name='firstname']", Credentials::$FIRSTNAME); //Add first name
+        $Ch->wait(2);
+        $Ch->click("//div[@name='shippingAddress.lastname']"); //Click to last name field
+        $Ch->fillField("//div[@name='shippingAddress.lastname']//input[@name='lastname']", Credentials::$LASTNAME); //Add last name
+        $Ch->wait(2);
+        $Ch->click("//div[@name='shippingAddress.company']"); //Click to company field
+        $Ch->wait(2);
+        $Ch->fillField("//div[@name='shippingAddress.company']/div/input[@name='company']", Credentials::$COMPANY);
+        $Ch->wait(2);
+        $Ch->click("//div[contains(@name,'street.0')]"); //Click to shipping address field
+        $Ch->wait(2);
+        $Ch->fillField("//input[contains(@name,'street[0]')]", '1000'); //Add shipping index to the field
+        $Ch->wait(5);
+        $addressList = rand(1, 5);
+        $Ch->click("//ul/li[@id][$addressList]"); //Choose random shipping address
+        $Ch->wait(10);
+        $Ch->waitPageLoad();
+        $Ch->click("//div[@name='shippingAddress.telephone']"); //Click to  phone number field
+        $Ch->fillField("//div[@name='shippingAddress.telephone']//input[@name='telephone']", Credentials::$PHONE); //Add phone number
+        $Ch->wait(5);
     }
 
     /**
      * @throws Exception
      */
-    public function loginFromCheckOut(){
+    public function loginFromCheckOut()
+    {
         $Ch = $this;
         $Ch->waitPageLoad();
-        $Ch->fillField('#customer-email',Credentials::$EMAIL);
+        $Ch->fillField('#customer-email', Credentials::$EMAIL);
         $Ch->wait(5);
         $Ch->waitAjaxLoad();
-        $Ch->seeInField('#customer-email',Credentials::$EMAIL);
+        $Ch->seeInField('#customer-email', Credentials::$EMAIL);
         $Ch->waitForElement('#customer-password', 10);
         $Ch->fillField("#customer-password", Credentials::$PASSWORD);
         $Ch->waitAjaxLoad();
         $Ch->seeInField('#customer-password', Credentials::$PASSWORD);
         $Ch->waitAjaxLoad();
-        $Ch->executeJS("document.querySelectorAll('.action.secondary.login')[0].click()");
-        $Ch->waitForElementNotVisible('#customer-email',5);
+        $Ch->waitForElementClickable('button[class="action secondary login"]', 10);
+        $Ch->click('button[class="action secondary login"]');
+        $Ch->waitPageLoad();
+        $Ch->waitForElementNotVisible('#customer-email', 5);
+
     }
 
     /**
@@ -51,177 +81,60 @@ class CheckoutTester extends GlobalTester
      */
     public function randomDeliveryMethod() //Select random delivery method and go to payment page
     {
-        $I = $this;
-        $deliveryMethodsCount = $I->getElementsCountByCssSelector('tr.delivery-method-row'); //Get delivery methods count
-        $randomDeliveryMethodNumber = Factory::create(); //Run Faker create generator
-        $randomDeliveryMethodNumber = $randomDeliveryMethodNumber->numberBetween(1, $deliveryMethodsCount); //Converted to string and generate numberBetween
-        $I->wait(1);
-        $I->click("//tr[@class='row delivery-method-row'][$randomDeliveryMethodNumber]"); //Click on random delivery method
-        $I->waitAjaxLoad();
-        $I->wait(1); //For full loading 'Order Success' block
-        $I->fillField("//div[@class='payment-option-inner']//textarea", 'automation test'); //Enter 'Delivery Instructions' field
-        $I->waitForElementClickable("//button[contains(@class,'continue')]"); //Waiting for 'Continue to review & payment' button is clickable
-        $I->wait(1);
-        $I->click("//button[contains(@class,'continue')]"); //Click on 'Continue to review & payment' button
-        $I->waitForElementVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to appear
-        $I->waitForElementNotVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to disappear
-        $I->waitPageLoad();
-    }
-
-    /**
-     * @param $paymentMethod
-     * @param $checkElementOnPaymentPage
-     * @param $checkCurrentUrl
-     * @throws Exception
-     */
-    public function paymentMethodByArgument($paymentMethod, $checkElementOnPaymentPage, $checkCurrentUrl) //Select payment method, check element and URL on payment method page by arguments
-    {
-        $I = $this;
-        $I->moveMouseOver($paymentMethod); //Hover on payment method by argument
-        $I->wait(1);
-        $I->click($paymentMethod); //Click on payment method by selector
-        $I->waitForElementVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to appear
-        $I->waitForElementNotVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to disappear
-        $I->waitAjaxLoad();
-        $I->waitForElementClickable("//button[@id='place-order-trigger']"); //Waiting for 'Complete Your Order' button is clickable
-        $I->wait(3);
-        $I->click("//button[@id='place-order-trigger']"); //Click on 'Complete Your Order' button
-        $I->waitForElementVisible($checkElementOnPaymentPage, 120); //Check element on payment method page by selector
-        $I->seeInCurrentUrl($checkCurrentUrl); //Check if current URL is contains by argument
+        $Ch = $this;
+        $Ch->waitPageLoad();
+        $Ch->waitAjaxLoad();
+        $Ch->waitForElementVisible('div.shipping-item__name');
+        $deliveryMethodsCount = $Ch->getElementsCountByCssSelector('div.shipping-item__name'); //Get delivery methods count
+        $randomDeliveryMethodNumber = rand(1, $deliveryMethodsCount); //Run Faker create generator
+        $Ch->click("(//div[@class='shipping-item__name'])[$randomDeliveryMethodNumber]"); //Click on random delivery method
+        $Ch->waitAjaxLoad();
+        $Ch->wait(1); //For full loading 'Order Success' block
+        $Ch->fillField("//div[@class='payment-option-inner']//textarea", 'automation test'); //Enter 'Delivery Instructions' field
+        $Ch->waitForElementClickable("//button[contains(@class,'continue')]"); //Waiting for 'Continue to review & payment' button is clickable
+        $Ch->wait(1);
+        $Ch->click("//button[contains(@class,'continue')]"); //Click on 'Continue to review & payment' button
+        $Ch->waitForElementVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to appear
+        $Ch->waitForElementNotVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to disappear
+        $Ch->waitPageLoad();
     }
 
     /**
      * @param string $paymentMethod
+     * @param string $checkTitleOnPaymentPage
      * @throws Exception
      */
-    public function processCheckoutForLoggedUser(string $paymentMethod)
+    public function paymentMethodByArgument(string $paymentMethod, string $checkTitleOnPaymentPage) //Select payment method by arguments
     {
-        $I = $this;
-        $I->amOnPage('/checkout');
-        $I->waitForElementClickable("//tr[@class='row delivery-method-row'][1]", 10);
-        $I->click("//tr[@class='row delivery-method-row'][1]"); //Click on random delivery method
-        $I->waitAjaxLoad(15);
-        $I->fillField("//div[@class='payment-option-inner']//textarea", 'automation test'); //Enter 'Delivery Instructions' field
-        $I->waitForElementClickable("//button[contains(@class,'continue')]", 10); //Waiting for 'Continue to review & payment' button is clickable
-        $I->click("//button[contains(@class,'continue')]"); //Click on 'Continue to review & payment' button
-        $I->waitForElementVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to appear
-        $I->waitForElementNotVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to disappear
-        $I->wait(2);
-        $I->executeJS("document.evaluate(\"//*/span[contains(text(), '$paymentMethod')]/ancestor::div/input[@name='payment[method]']\", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();");
-//        $I->click("//*/span[contains(text(), '$paymentMethod')]/ancestor::div/input[@name='payment[method]']"); //Click on payment method by selector
-        $I->waitForElementVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to appear
-        $I->waitForElementNotVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to disappear
-        $I->waitForElementClickable("//button[@id='place-order-trigger']"); //Waiting for 'Complete Your Order' button is clickable
-        $I->wait(3);
+        $Ch = $this;
+        $Ch->wait(1);
+        $Ch->waitPageLoad();
+        $Ch->waitAjaxLoad();
+        $Ch->moveMouseOver("//input[@id='" . $paymentMethod . "']/parent::div/label"); //Hover on payment method by argument
+        $Ch->wait(1);
+        $Ch->click("//input[@id='" . $paymentMethod . "']/parent::div/label"); //Click on payment method by selector
+        $Ch->waitForElementVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to appear
+        $Ch->waitForElementNotVisible("//div[@class='loading-mask']", 30); //Waiting for preloader to disappear
+        $Ch->waitAjaxLoad();
+        $Ch->clickOnElementByCssSelector('div[class="checkout-agreement field choice required"] input');
+        $Ch->wait(3);
+        $Ch->waitForElementClickable("//button[@id='checkout-place-order']"); //Waiting for 'Complete Your Order' button is clickable
+        $Ch->click("//button[@id='checkout-place-order']"); //Click on 'Complete Your Order' button
+        $Ch->wait(10);
+        $Ch->seeInTitle($checkTitleOnPaymentPage, 120);
     }
 
     /**
+     * @param string $paymentMethod
+     * @param string $checkTitleOnPaymentPage
      * @throws Exception
      */
-    public function userGuestData()
+    public function processCheckoutForLoggedUser(string $paymentMethod, string $checkTitleOnPaymentPage)
     {
-        $I = $this;
-        $email = Factory::create();
-        $email = $email->safeEmail; //Generate fake email
-        $I->fillField("//input[contains(@id,'customer-email')]", $email); //Add email to the field
-        $I->wait(5);
-        $I->click("//div[contains(@name,'firstname')]"); //Click to first name field
-        $I->wait(2);
-        $I->fillField("//div[@name='shippingAddress.firstname']//input[@name='firstname']", 'Autotest'); //Add first name
-        $I->wait(2);
-        $I->click("//div[@name='shippingAddress.lastname']"); //Click to last name field
-        $I->fillField("//div[@name='shippingAddress.lastname']//input[@name='lastname']", 'MKQA'); //Add last name
-        $I->wait(2);
-        $I->click("//div[contains(@name,'street.0')]"); //Click to shipping address field
-        $I->wait(2);
-        $I->fillField("//input[contains(@name,'street[0]')]", '1000'); //Add shipping index to the field
-        $I->wait(5);
-        $addressList = Factory::create();
-        $addressList = $addressList->NumberBetween(1, 5);
-        $I->click("//div[contains(@class,'autocomplete')]//li[@id][$addressList]"); //Choose random shipping address
-        $I->wait(10);
-        $I->waitPageLoad();
-        $I->click("//div[@name='shippingAddress.telephone']"); //Click to  phone number field
-        $I->fillField("//div[@name='shippingAddress.telephone']//input[@name='telephone']", Credentials::$PHONE); //Add phone number
-        $I->wait(5);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function clickAndCollect()
-    {
-        $I = $this;
-        $I->click("//div[contains(@class,'click-collect')]"); //Click on 'Click And Collect' tab on checkout page
-        $I->waitPageLoad();
-        $I->seeElement("//div[@class='free-msg-content']"); //Check message
-        $I->click("//span[contains(@id,'cc-store-selector')]"); //Click to Store selector
-        $I->wait(3);
-        $randomStoreFromList = Factory::create();
-        $randomStoreFromList = $randomStoreFromList->numberBetween(1, 2);
-        $foundStore = false;
-        while (!$foundStore) { //Start cycle for check 'North Island' or 'South Island' radio button
-            try {
-                $I->seeElement("//ul[contains(@id,'cc-store')]//li[contains(@id,'cc-store')][$randomStoreFromList]"); //Choose one of stores
-                $foundStore = true; //This delivery method one of 'North Island' or 'South Island' - true
-                $I->click("//ul[contains(@id,'cc-store')]//li[contains(@id,'cc-store')][$randomStoreFromList]"); //Click on delivery method one of 'North Island' or 'South Island'
-            } catch (Exception $e) {
-                $randomStoreFromList = Factory::create();
-                $randomStoreFromList = $randomStoreFromList->numberBetween(1, 2);
-            }
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function bulkyDeliveryMethod()
-    {
-        $I = $this;
-        $randomDeliveryMethod = Factory::create(); //Run Faker create generator
-        $randomDeliveryMethod = $randomDeliveryMethod->numberBetween(1, 5); //Converted to string and generate numberBetween
-        $foundBulkyDeliveryMethod = false; //Creating a variable for 'North Island' or 'South Island' radio button
-        while (!$foundBulkyDeliveryMethod) { //Start cycle for check 'North Island' or 'South Island' radio button
-            try {
-                $I->seeElement("//tr[contains(@class,'delivery')][$randomDeliveryMethod]//td[contains(@class,'price')]//div[contains(@id,'bulky')]");
-                $foundBulkyDeliveryMethod = true; //This delivery method one of 'North Island' or 'South Island '- true
-                $I->click("//tr[contains(@class,'delivery')][$randomDeliveryMethod]//td[contains(@class,'price')]"); //Click on delivery method one of 'North Island' or 'South Island'
-            } catch (Exception $e) {
-                $randomDeliveryMethod = Factory::create(); //Run Faker create generator
-                $randomDeliveryMethod = $randomDeliveryMethod->numberBetween(1, 5); //Converted to string and generate numberBetween
-            }
-        }
-        $I->wait(5);
-        $I->waitPageLoad();
-        $I->click("//button[contains(@class,'continue')]"); //Click to "Continue" button
-        $I->waitPageLoad();
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function paymentCreditCardOrAfterPay()
-    {
-        $I = $this;
-        $I->see('Select Payment Method:'); //Check text on Payment step
-        $I->wait(5);
-        $randomPaymentMethod = Factory::create(); //Run Faker create generator
-        $randomPaymentMethod = $randomPaymentMethod->numberBetween(1, 5);
-        $foundPaymentMethod = false;
-        while (!$foundPaymentMethod) {
-            try {
-                $I->seeElement("//input[@id='paymentexpress_pxpay2' or @id='afterpaypayovertime'][$randomPaymentMethod]/parent::div/label"); //Check if payment methods AfterPay or Credit Card presents
-                $foundPaymentMethod = true;
-                $I->click("//input[@id='paymentexpress_pxpay2' or @id='afterpaypayovertime'][$randomPaymentMethod]/parent::div/label"); //Choose payment methods AfterPay or Credit Card
-            } catch (Exception $e) {
-                $randomPaymentMethod = Factory::create(); //Run Faker create generator
-                $randomPaymentMethod = $randomPaymentMethod->numberBetween(1, 5); //Converted to string and generate numberBetween
-            }
-        }
-        $I->wait(3);
-        $I->waitPageLoad();
-        $I->click("//button[contains(@id,'order')]"); //Click on "Create order" button
-        $I->wait(7);
+        $Ch = $this;
+        $Ch->goToCheckout();
+        $Ch->randomDeliveryMethod();
+        $Ch->paymentMethodByArgument($paymentMethod, $checkTitleOnPaymentPage);
     }
 
 }

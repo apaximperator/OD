@@ -8,6 +8,7 @@ class UserCest
      */
     public function userLogin(GlobalTester $G)
     {
+        $G->amOnPage('/');
         $G->login();
         $G->logout();
     }
@@ -18,6 +19,7 @@ class UserCest
      */
     public function userRegister(GlobalTester $G)
     {
+        $G->amOnPage('/');
         $user = $G->registration();
         $G->login($user['firstname'], $user['email'], $user['password']);
         $G->logout();

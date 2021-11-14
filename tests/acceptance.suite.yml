@@ -12,15 +12,13 @@ modules:
     - tests\_support\AcceptanceHelper
     config:
       WebDriver:
-        window_size: 1920x1080
-        resolution: 1920x1080
         url: "https://www.bendonlingerie.com.au/"
         host: localhost
         port: 4444
+        resolution: 1920x1080
+        window_size: 1920x1080
         browser: chrome
         capabilities:
-          chromeOptions:
-            args: [ "--no-sandbox", "--disable-dev-shm-usage" ]
 step_decorators:
   - \Codeception\Step\TryTo
   - \Codeception\Step\ConditionalAssertion
